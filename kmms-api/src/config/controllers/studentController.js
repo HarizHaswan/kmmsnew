@@ -42,7 +42,8 @@ exports.createStudent = async (req, res, next) => {
   try {
     const {
       name, dateOfBirth, gender, registrationDate, classId,
-      parentName, parentEmail, parentPassword, teacherId, status
+      parentName, parentEmail, parentPassword, teacherId, status,
+      isExistingParent
     } = req.body;
 
     console.log("--- CREATING STUDENT ---");
@@ -51,26 +52,35 @@ exports.createStudent = async (req, res, next) => {
     const age = calculateAge(dateOfBirth);
 
     // 2. Validate Parent
-    if (parentEmail && !parentPassword) {
-      return res.status(400).json({ message: "Parent password is required." });
-    }
+    let existingParentUser = null;
 
-    // 3. Check existing email
-    if (parentEmail) {
-      const existingUser = await User.findOne({ email: parentEmail.toLowerCase().trim() });
-      if (existingUser) {
-        return res.status(400).json({ message: "Parent email already exists." });
+    if (isExistingParent) {
+      if (!parentEmail) return res.status(400).json({ message: "Existing parent email is required." });
+      existingParentUser = await User.findOne({ email: parentEmail.toLowerCase().trim(), role: 'parent' });
+      if (!existingParentUser) return res.status(404).json({ message: "Parent not found with that email." });
+    } else {
+      if (parentEmail && !parentPassword) {
+        return res.status(400).json({ message: "Parent password is required for new parent." });
+      }
+      if (parentEmail) {
+        const existingUser = await User.findOne({ email: parentEmail.toLowerCase().trim() });
+        if (existingUser) {
+          return res.status(400).json({ message: "Parent email already exists. Use 'Existing Parent' option." });
+        }
       }
     }
 
     // 4. Create Student
     const newStudent = await Student.create({
       name, dateOfBirth, age, gender, registrationDate, classId,
-      parentName, teacherId: teacherId || undefined, status: status || "active",
+      parentName: existingParentUser ? existingParentUser.name : parentName, 
+      teacherId: teacherId || undefined, 
+      status: status || "active",
+      parentId: existingParentUser ? existingParentUser._id : undefined
     });
 
-    // 5. Create Parent User (MANUALLY HASH PASSWORD)
-    if (parentEmail && parentPassword) {
+    // 5. Create Parent User (MANUALLY HASH PASSWORD) if new parent
+    if (!isExistingParent && parentEmail && parentPassword) {
       const cleanEmail = parentEmail.toLowerCase().trim();
       const cleanPassword = parentPassword.trim();
 
@@ -90,9 +100,11 @@ exports.createStudent = async (req, res, next) => {
       
       console.log("✅ Parent Created:", cleanEmail);
 
-      // Link Student
+      // Link Student back to new parent
       newStudent.parentId = newParent._id;
       await newStudent.save();
+    } else if (isExistingParent && existingParentUser) {
+      console.log("✅ Linked to Existing Parent ID:", existingParentUser._id);
     }
 
     res.status(201).json(newStudent);

@@ -1,11 +1,11 @@
-const SickLeave = require('../models/SickLeave');
-const { getUserIdsByRole, createNotificationsForUsers, createNotification } = require('../utils/notificationHelper');
+const SickLeave = require('../models/TeacherSickLeave');
+const { getUserIdsByRole, createNotificationsForUsers, createNotification } = require('../../utils/notificationHelper');
 
 // teacher submits
 exports.submitSickLeave = async (req, res) => {
   const teacherId = req.user.id;
-  const { startDate, endDate, reason } = req.body;
-  const sl = new SickLeave({ teacher: teacherId, startDate, endDate, reason });
+  const { startDate, endDate, reason, attachment } = req.body;
+  const sl = new SickLeave({ teacher: teacherId, startDate, endDate, reason, attachment });
   await sl.save();
 
   // notify admins
@@ -19,6 +19,21 @@ exports.submitSickLeave = async (req, res) => {
   });
 
   res.status(201).json(sl);
+};
+
+// teacher adds attachment later
+exports.addAttachment = async (req, res) => {
+  const teacherId = req.user.id;
+  const { id } = req.params;
+  const { attachment } = req.body;
+
+  const sl = await SickLeave.findOne({ _id: id, teacher: teacherId });
+  if (!sl) return res.status(404).json({ message: 'Sick leave request not found' });
+
+  sl.attachment = attachment;
+  await sl.save();
+
+  res.json(sl);
 };
 
 // admin review

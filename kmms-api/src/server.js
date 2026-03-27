@@ -39,6 +39,8 @@ app.use("/uploads", express.static("uploads"));
 app.use("/api/upload", require("./config/routes/uploadRoutes"));
 app.use("/api/timetables", require("./config/routes/timetableRoutes"));
 app.use("/api/attendance", require("./config/routes/attendanceRoutes"));
+app.use("/api/sick-leave", require("./config/routes/sickLeaveRoutes"));
+app.use("/api/salary", require("./config/routes/teacherSalaryRoutes"));
 
 // Health check
 app.get("/", (req, res) => {

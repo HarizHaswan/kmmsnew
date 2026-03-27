@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Loader2, CheckCircle, XCircle, Clock, Search, Filter } from "lucide-react";
+import { Loader2, CheckCircle, XCircle, Clock, Search, Filter, Paperclip } from "lucide-react";
 import { getAllLeaves, updateLeaveStatus } from "../../api/leaves";
 
 const LeaveManagement = () => {
@@ -162,6 +162,7 @@ const LeaveManagement = () => {
                 <th className="px-6 py-4">Teacher</th>
                 <th className="px-6 py-4">Reason</th>
                 <th className="px-6 py-4">Duration</th>
+                <th className="px-6 py-4">Attachment</th>
                 <th className="px-6 py-4">Submitted</th>
                 <th className="px-6 py-4">Status</th>
                 <th className="px-6 py-4 text-right">Actions</th>
@@ -195,6 +196,20 @@ const LeaveManagement = () => {
                           to {new Date(req.endDate).toLocaleDateString()}
                         </span>
                       </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {req.attachment ? (
+                        <a
+                          href={`http://localhost:5000${req.attachment}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-indigo-600 hover:text-indigo-800 text-xs flex items-center gap-1 font-medium bg-indigo-50 px-2 py-1.5 rounded-lg w-max"
+                        >
+                          <Paperclip className="w-3 h-3" /> View Document
+                        </a>
+                      ) : (
+                        <span className="text-gray-400 text-xs italic">No attachment</span>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-gray-500">
                       {new Date(req.submittedAt).toLocaleDateString()}

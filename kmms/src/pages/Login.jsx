@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import http from "../api/http";
-import { 
-  Loader2, 
-  User, 
-  Lock, 
-  ChevronLeft, 
-  School, 
-  GraduationCap, 
+import {
+  Loader2,
+  User,
+  Lock,
+  ChevronLeft,
+  School,
+  GraduationCap,
   Users,
   Eye,      // <--- Added
   EyeOff    // <--- Added
@@ -124,7 +124,7 @@ const Login = ({ onLogin }) => {
       {/* RIGHT SIDE - LOGIN FORM */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50">
         <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl">
-          
+
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-gray-900">
               {!role ? "Welcome Back" : `${role.charAt(0).toUpperCase() + role.slice(1)} Login`}
@@ -136,26 +136,26 @@ const Login = ({ onLogin }) => {
 
           {!role ? (
             <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <RoleCard 
-                role="admin" 
-                icon={School} 
-                title="Admin Portal" 
-                description="System management & oversight" 
-                onClick={setRole} 
+              <RoleCard
+                role="admin"
+                icon={School}
+                title="Administrator Portal"
+                description="System management & oversight"
+                onClick={setRole}
               />
-              <RoleCard 
-                role="teacher" 
-                icon={GraduationCap} 
-                title="Teacher Portal" 
-                description="Classroom & student management" 
-                onClick={setRole} 
+              <RoleCard
+                role="teacher"
+                icon={GraduationCap}
+                title="Teacher Portal"
+                description="Classroom & student management"
+                onClick={setRole}
               />
-              <RoleCard 
-                role="parent" 
-                icon={Users} 
-                title="Parent Portal" 
-                description="View child's progress & updates" 
-                onClick={setRole} 
+              <RoleCard
+                role="parent"
+                icon={Users}
+                title="Parent Portal"
+                description="View child's progress & updates"
+                onClick={setRole}
               />
             </div>
           ) : (
@@ -166,20 +166,20 @@ const Login = ({ onLogin }) => {
                 </div>
               )}
 
-              <InputField 
-                icon={User} 
-                type="email" 
-                placeholder="Email Address" 
-                value={email} 
-                onChange={(e) => setEmail(e.target.value)} 
+              <InputField
+                icon={User}
+                type="email"
+                placeholder="Email Address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
-              
-              <InputField 
-                icon={Lock} 
-                type="password" 
-                placeholder="Password" 
-                value={password} 
-                onChange={(e) => setPassword(e.target.value)} 
+
+              <InputField
+                icon={Lock}
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
 
               <button

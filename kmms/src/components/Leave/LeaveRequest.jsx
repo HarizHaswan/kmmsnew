@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { Loader2, Calendar, FileText, CheckCircle, XCircle, Clock } from "lucide-react";
-import { submitLeaveRequest, getMyLeaves } from "../../api/leaves";
+import React, { useState, useEffect, useRef } from "react";
+import { Loader2, Calendar, FileText, CheckCircle, XCircle, Clock, Upload, Paperclip } from "lucide-react";
+import { submitLeaveRequest, getMyLeaves, uploadAttachment, addLeaveAttachment } from "../../api/leaves";
 
 const LeaveRequest = ({ teacherId }) => {
   const [leaves, setLeaves] = useState([]);
@@ -12,7 +12,9 @@ const LeaveRequest = ({ teacherId }) => {
     reason: "",
     startDate: "",
     endDate: "",
+    attachment: null,
   });
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     fetchLeaves();
@@ -36,6 +38,15 @@ const LeaveRequest = ({ teacherId }) => {
     }));
   };
 
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setForm((prev) => ({
+        ...prev,
+        attachment: e.target.files[0],
+      }));
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.reason || !form.startDate || !form.endDate) return;
@@ -44,14 +55,46 @@ const LeaveRequest = ({ teacherId }) => {
     setError("");
 
     try {
-      await submitLeaveRequest(form);
-      setForm({ reason: "", startDate: "", endDate: "" });
+      let attachmentUrl = null;
+      if (form.attachment) {
+        const formData = new FormData();
+        formData.append("file", form.attachment);
+        const uploadRes = await uploadAttachment(formData);
+        attachmentUrl = uploadRes.url;
+      }
+
+      await submitLeaveRequest({
+        reason: form.reason,
+        startDate: form.startDate,
+        endDate: form.endDate,
+        attachment: attachmentUrl
+      });
+
+      setForm({ reason: "", startDate: "", endDate: "", attachment: null });
+      if (fileInputRef.current) fileInputRef.current.value = "";
       fetchLeaves(); // Refresh list
     } catch (err) {
       console.error("Failed to submit leave:", err);
       setError("Failed to submit leave request. Please try again.");
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleUploadFromList = async (leaveId, file) => {
+    if (!file) return;
+    try {
+      setLeaves(leaves.map(l => l._id === leaveId ? { ...l, uploadingAttachment: true } : l));
+      const formData = new FormData();
+      formData.append("file", file);
+      const uploadRes = await uploadAttachment(formData);
+
+      await addLeaveAttachment(leaveId, uploadRes.url);
+      fetchLeaves();
+    } catch (err) {
+      console.error("Failed to upload attachment from list", err);
+      setError("Failed to upload attachment to existing request.");
+      fetchLeaves(); // reset loaders
     }
   };
 
@@ -157,6 +200,24 @@ const LeaveRequest = ({ teacherId }) => {
                 </div>
               </div>
 
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Medical Certificate (Optional)</label>
+                <div className="relative">
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    className="w-full text-sm text-gray-500
+                      file:mr-4 file:py-2.5 file:px-4
+                      file:rounded-xl file:border-0
+                      file:text-sm file:font-medium
+                      file:bg-indigo-50 file:text-indigo-700
+                      hover:file:bg-indigo-100 transition-colors
+                      cursor-pointer border border-gray-200 rounded-xl pr-3"
+                  />
+                </div>
+              </div>
+
               <button
                 type="submit"
                 disabled={submitting}
@@ -197,6 +258,7 @@ const LeaveRequest = ({ teacherId }) => {
                     <tr>
                       <th className="px-6 py-4">Reason</th>
                       <th className="px-6 py-4">Duration</th>
+                      <th className="px-6 py-4">Attachment</th>
                       <th className="px-6 py-4">Submitted</th>
                       <th className="px-6 py-4 text-right">Status</th>
                     </tr>
@@ -216,6 +278,35 @@ const LeaveRequest = ({ teacherId }) => {
                               to {new Date(leave.endDate).toLocaleDateString()}
                             </span>
                           </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {leave.attachment ? (
+                            <a
+                              href={`http://localhost:5000${leave.attachment}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-indigo-600 hover:text-indigo-800 text-xs flex items-center gap-1 font-medium bg-indigo-50 px-2 py-1.5 rounded-lg w-max"
+                            >
+                              <Paperclip className="w-3 h-3" /> View Document
+                            </a>
+                          ) : (
+                            leave.status === "approved" ? (
+                              leave.uploadingAttachment ? (
+                                <span className="text-xs text-gray-500 flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin" /> Uploading...</span>
+                              ) : (
+                                <label className="text-indigo-600 hover:text-indigo-800 cursor-pointer text-xs flex items-center gap-1 font-medium bg-indigo-50 hover:bg-indigo-100 px-2 py-1.5 rounded-lg transition-colors w-max">
+                                  <Upload className="w-3 h-3" /> Add Certificate
+                                  <input
+                                    type="file"
+                                    className="hidden"
+                                    onChange={(e) => handleUploadFromList(leave._id, e.target.files[0])}
+                                  />
+                                </label>
+                              )
+                            ) : (
+                              <span className="text-gray-400 text-xs italic">No attachment</span>
+                            )
+                          )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-gray-500">
                           {new Date(leave.submittedAt).toLocaleDateString()}

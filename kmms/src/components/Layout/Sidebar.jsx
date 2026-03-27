@@ -47,6 +47,7 @@ const Sidebar = ({
     { id: "attendance", label: "Attendance", icon: CheckCircle },
     { id: "timetables", label: "My Timetables", icon: Calendar }, // not wired yet
     { id: "leave-request", label: "Leave Request", icon: FileText },
+    { id: "salary", label: "Salary", icon: Banknote },
     { id: "messages", label: "Messages", icon: MessageSquare }, // placeholder
     { id: "progress", label: "Progress Reports", icon: FileText }, // placeholder
     { id: "announcements", label: "Announcements", icon: Bell },
@@ -60,15 +61,15 @@ const Sidebar = ({
     { id: "payments", label: "Payments", icon: DollarSign },
     { id: "messages", label: "Messages", icon: MessageSquare },
     { id: "announcements", label: "Announcements", icon: Bell },
-    { id: "settings", label: "Settings", icon: Settings },           
+    { id: "settings", label: "Settings", icon: Settings },
   ];
 
   const navItems =
     role === "admin"
       ? [...common, ...adminTabs]
       : role === "teacher"
-      ? [...common, ...teacherTabs]
-      : [...common, ...parentTabs];
+        ? [...common, ...teacherTabs]
+        : [...common, ...parentTabs];
 
   const content = (
     <div className="h-full flex flex-col">
@@ -134,7 +135,7 @@ const Sidebar = ({
       )}
     </>
   );
-  
+
 };
 
 export default Sidebar;

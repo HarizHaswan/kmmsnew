@@ -21,8 +21,8 @@ router.get("/:id", protect, authorize("admin", "parent"), getInvoice);
 // Create invoice (admin)
 router.post("/", protect, authorize("admin"), createInvoice);
 
-// Update invoice (admin)
-router.put("/:id", protect, authorize("admin"), updateInvoice);
+// Update invoice (admin + parent — parent can mark as paid after paying)
+router.put("/:id", protect, authorize("admin", "parent"), updateInvoice);
 
 // Delete invoice (admin)
 router.delete("/:id", protect, authorize("admin"), deleteInvoice);

@@ -4,14 +4,16 @@ import {
   BookOpen,
   CheckCircle,
   DollarSign,
+  ClipboardList,
 } from "lucide-react";
 
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
-
+import { Button } from "../ui/button";
 import { getStudents } from "../../api/students";
 import { getTeachers } from "../../api/teachers";
-import { getClasses } from "../../api/classes"; 
+import { getClasses } from "../../api/classes";
 import { getAttendance } from "../../api/attendance";
+import { getAllLeaves, updateLeaveStatus } from "../../api/leaves";
 
 import LiveDateTime from "../Common/LiveDateTime";
 
@@ -22,8 +24,11 @@ export default function AdminDashboard({ setActiveTab }) {
     present: 0,
     total: 0,
   });
-  // eslint-disable-next-line no-unused-vars
-  const [revenue, setRevenue] = useState(0);
+  const [teacherAttendanceCount, setTeacherAttendanceCount] = useState({
+    present: 0,
+    total: 0,
+  });
+  const [pendingLeavesList, setPendingLeavesList] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // -----------------------
@@ -39,14 +44,14 @@ export default function AdminDashboard({ setActiveTab }) {
 
       // 1. Fetch & Filter Students (Active Only)
       const studentsData = await getStudents();
-      const activeStudents = studentsData.filter(s => 
+      const activeStudents = studentsData.filter(s =>
         s.status && s.status.toLowerCase() === "active"
       );
       setTotalStudents(activeStudents.length);
 
       // 2. Fetch & Filter Teachers (Active Only)
       const teachersData = await getTeachers();
-      const activeTeachersList = teachersData.filter(t => 
+      const activeTeachersList = teachersData.filter(t =>
         t.status && t.status.toLowerCase() === "active"
       );
       setActiveTeachers(activeTeachersList.length);
@@ -56,38 +61,38 @@ export default function AdminDashboard({ setActiveTab }) {
       const year = dateObj.getFullYear();
       const month = String(dateObj.getMonth() + 1).padStart(2, '0');
       const day = String(dateObj.getDate()).padStart(2, '0');
-      const today = `${year}-${month}-${day}`; 
-      
+      const today = `${year}-${month}-${day}`;
+
       // A. Get all classes first
       const allClasses = await getClasses();
 
       // B. Fetch attendance for each class for TODAY in parallel
-      const attendancePromises = allClasses.map(cls => 
+      const attendancePromises = allClasses.map(cls =>
         getAttendance(today, cls._id)
-          .catch(() => null) 
+          .catch(() => null)
       );
-      
+
       const results = await Promise.all(attendancePromises);
 
       // C. Sum up the "Present" counts strictly for ACTIVE students
       let totalPresent = 0;
-      
+
       results.forEach((record) => {
         if (record && record.records && Array.isArray(record.records)) {
-           
-           const classPresent = record.records.filter(r => {
-             // Check 1: Is the attendance status "Present"?
-             const isMarkedPresent = r.status && r.status.toLowerCase() === "present";
 
-             // Check 2: Is the Student Account "Active"?
-             // (We use r.studentId.status because we populated it in the backend)
-             const studentAccountStatus = r.studentId?.status || "active"; 
-             const isAccountActive = studentAccountStatus.toLowerCase() === "active";
+          const classPresent = record.records.filter(r => {
+            // Check 1: Is the attendance status "Present"?
+            const isMarkedPresent = r.status && r.status.toLowerCase() === "present";
 
-             return isMarkedPresent && isAccountActive;
-           }).length;
-           
-           totalPresent += classPresent;
+            // Check 2: Is the Student Account "Active"?
+            // (We use r.studentId.status because we populated it in the backend)
+            const studentAccountStatus = r.studentId?.status || "active";
+            const isAccountActive = studentAccountStatus.toLowerCase() === "active";
+
+            return isMarkedPresent && isAccountActive;
+          }).length;
+
+          totalPresent += classPresent;
         }
       });
 
@@ -96,12 +101,61 @@ export default function AdminDashboard({ setActiveTab }) {
         total: activeStudents.length, // Denominator: Total Active Students
       });
 
+      // 4. Fetch Teacher Leaves & Calculate Teacher Attendance
+      let teachersPresentToday = activeTeachersList.length; // Assume all present
+      try {
+        const leavesData = await getAllLeaves();
+
+        // Find leaves that cover today and are 'approved'
+        const todayDateStr = new Date().toISOString().split('T')[0]; // "YYYY-MM-DD"
+        const todayMs = new Date(todayDateStr).getTime();
+
+        const absentTeachers = leavesData.filter(leave => {
+          if (leave.status && leave.status.toLowerCase() === "approved") {
+            const startObj = new Date(leave.startDate);
+            const endObj = leave.endDate ? new Date(leave.endDate) : startObj;
+
+            // Match dates by stripping time
+            const st = new Date(startObj.toISOString().split('T')[0]).getTime();
+            const en = new Date(endObj.toISOString().split('T')[0]).getTime();
+
+            if (todayMs >= st && todayMs <= en) return true;
+          }
+          return false;
+        });
+
+        const pending = leavesData.filter(l => l.status && l.status.toLowerCase() === "pending");
+        setPendingLeavesList(pending);
+
+      } catch (leaveErr) {
+        console.warn("Could not fetch leaves:", leaveErr);
+      }
+
+      setTeacherAttendanceCount({
+        present: teachersPresentToday,
+        total: activeTeachersList.length
+      });
+
     } catch (err) {
       console.error("Dashboard load error:", err);
     } finally {
       setLoading(false);
     }
   }
+
+  // -----------------------
+  // HANDLERS
+  // -----------------------
+  const handleReviewLeave = async (id, action) => {
+    try {
+      await updateLeaveStatus(id, action);
+      // Reload dashboard data instantly after review
+      loadDashboardData();
+    } catch (err) {
+      console.error("Failed to review leave:", err);
+      alert("Error updating leave status.");
+    }
+  };
 
   // -----------------------
   // STATS BOX DESIGN
@@ -129,11 +183,11 @@ export default function AdminDashboard({ setActiveTab }) {
       onClick: () => setActiveTab("attendance"),
     },
     {
-      title: "Revenue (This Month)",
-      value: `RM ${revenue}`,
-      icon: DollarSign,
+      title: "Teacher Attendance",
+      value: `${teacherAttendanceCount.present}/${teacherAttendanceCount.total}`,
+      icon: ClipboardList,
       color: "from-yellow-400 to-yellow-600",
-      onClick: () => setActiveTab("payments"),
+      onClick: () => setActiveTab("leave"),
     },
   ];
 
@@ -150,7 +204,7 @@ export default function AdminDashboard({ setActiveTab }) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat) => {
           const Icon = stat.icon;
-          
+
           return (
             <Card
               key={stat.title}
@@ -184,8 +238,8 @@ export default function AdminDashboard({ setActiveTab }) {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-               <p className="text-gray-500 text-sm">No recent activities to show.</p>
-            </div> 
+              <p className="text-gray-500 text-sm">No recent activities to show.</p>
+            </div>
           </CardContent>
         </Card>
 
@@ -194,9 +248,36 @@ export default function AdminDashboard({ setActiveTab }) {
             <CardTitle>Pending Leave Requests</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-               <p className="text-gray-500 text-sm">No pending leave requests.</p>
-            </div>
+            {pendingLeavesList.length === 0 ? (
+              <div className="space-y-4">
+                <p className="text-gray-500 text-sm">No pending leave requests.</p>
+              </div>
+            ) : (
+              <div className="space-y-3 max-h-64 overflow-y-auto pr-2">
+                {pendingLeavesList.map(leave => (
+                  <div key={leave._id} className="p-3 border rounded-lg bg-gray-50 flex flex-col xl:flex-row xl:items-center justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-semibold text-gray-800">{leave.teacher?.name || 'Unknown Teacher'}</p>
+                      <p className="text-xs text-gray-500">
+                        {new Date(leave.startDate).toLocaleDateString()}
+                        {leave.endDate && ` to ${new Date(leave.endDate).toLocaleDateString()}`}
+                      </p>
+                      {leave.reason && (
+                        <p className="text-xs text-gray-600 mt-1"><span className="font-medium">Reason:</span> {leave.reason}</p>
+                      )}
+                    </div>
+                    <div className="flex gap-2">
+                      <Button size="sm" className="bg-green-600 hover:bg-green-700 h-10" onClick={() => handleReviewLeave(leave._id, 'approve')}>
+                        Approve
+                      </Button>
+                      <Button size="sm" variant="destructive" className="h-10" onClick={() => handleReviewLeave(leave._id, 'reject')}>
+                        Reject
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

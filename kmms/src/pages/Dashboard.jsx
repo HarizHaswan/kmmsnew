@@ -17,6 +17,8 @@ import ActivitiesTracking from "../components/Activities/ActivitiesTracking";
 import LeaveManagement from "../components/Leave/LeaveManagement";
 import LeaveRequest from "../components/Leave/LeaveRequest";
 import PaymentManagement from "../components/Payments/PaymentManagement";
+import AdminPayroll from "../components/Salary/AdminPayroll";
+import TeacherPayslips from "../components/Salary/TeacherPayslips";
 import Reports from "../components/Reports/Reports";
 import Announcements from "../components/Announcements/Announcements";
 import TeacherStudentView from "../components/Teachers/TeacherStudentView";
@@ -58,6 +60,9 @@ const Dashboard = ({ user, onLogout }) => {
       if (activeTab === "leave")
         return <LeaveManagement />;
 
+      if (activeTab === "salary")
+        return <AdminPayroll />;
+
       if (activeTab === "reports")
         return <Reports />;
 
@@ -83,8 +88,8 @@ const Dashboard = ({ user, onLogout }) => {
         return <TeacherDashboard setActiveTab={setActiveTab} user={user} />;
 
       if (activeTab === "students")
-        return <TeacherStudentView user={user}/>;
-      
+        return <TeacherStudentView user={user} />;
+
       if (activeTab === "timetables")
         return <TeacherTimetable />;
 
@@ -97,6 +102,9 @@ const Dashboard = ({ user, onLogout }) => {
 
       if (activeTab === "leave-request")
         return <LeaveRequest teacherId={user.id} />;
+
+      if (activeTab === "salary")
+        return <TeacherPayslips />;
 
       if (activeTab === "announcements")
         return <Announcements />;

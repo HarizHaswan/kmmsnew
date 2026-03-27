@@ -38,6 +38,7 @@ const StudentList = ({
   const [isAddClassDialogOpen, setIsAddClassDialogOpen] = useState(false);
   const [editingStudent, setEditingStudent] = useState(null);
   const [studentView, setStudentView] = useState("current");
+  const [isExistingParent, setIsExistingParent] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -142,6 +143,7 @@ const StudentList = ({
       parentPassword: formData.parentPassword,
       teacherId: formData.teacherId || undefined,
       status: formData.status,
+      isExistingParent: isExistingParent
     };
 
     if (editingStudent) {
@@ -164,6 +166,7 @@ const StudentList = ({
     });
     setEditingStudent(null);
     setIsAddDialogOpen(false);
+    setIsExistingParent(false);
   };
 
   const getStatusBadge = (status) => {
@@ -397,54 +400,121 @@ const StudentList = ({
                     </select>
                   </div>
 
-                  {/* Parent Name */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Parent Name *
-                    </label>
-                    <Input
-                      placeholder="Enter parent's full name"
-                      value={formData.parentName}
-                      onChange={(e) =>
-                        setFormData({ ...formData, parentName: e.target.value })
-                      }
-                      required
-                    />
-                  </div>
-
-                  {/* Parent Email (for registration) */}
+                  {/* Parent Section Headers/Toggles */}
                   {!editingStudent && (
-                    <>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Parent Email (for login) *
-                        </label>
-                        <Input
-                          type="email"
-                          placeholder="parent@example.com"
-                          value={formData.parentEmail}
-                          onChange={(e) =>
-                            setFormData({ ...formData, parentEmail: e.target.value })
-                          }
-                          required
-                        />
+                    <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 mt-6 mb-4">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-sm font-semibold text-gray-800">Parent Details</h3>
+                        <div className="flex items-center gap-2">
+                          <label className="text-xs font-semibold text-gray-600">Existing Parent?</label>
+                          <button
+                            type="button"
+                            onClick={() => setIsExistingParent(!isExistingParent)}
+                            className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 ${
+                              isExistingParent ? 'bg-indigo-600' : 'bg-gray-200'
+                            }`}
+                          >
+                            <span className="sr-only">Toggle existing parent</span>
+                            <span
+                              aria-hidden="true"
+                              className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                                isExistingParent ? 'translate-x-5' : 'translate-x-0'
+                              }`}
+                            />
+                          </button>
+                        </div>
                       </div>
 
+                      {isExistingParent ? (
+                        <div className="space-y-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Registered Parent Email *
+                            </label>
+                            <Input
+                              type="email"
+                              placeholder="Enter parent's exact registered email"
+                              value={formData.parentEmail}
+                              onChange={(e) =>
+                                setFormData({ ...formData, parentEmail: e.target.value })
+                              }
+                              required
+                            />
+                            <p className="text-xs text-gray-500 mt-1">
+                              The system will link this new student to the existing parent associated with this email.
+                            </p>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          {/* Parent Name */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Parent Name *
+                            </label>
+                            <Input
+                              placeholder="Enter parent's full name"
+                              value={formData.parentName}
+                              onChange={(e) =>
+                                setFormData({ ...formData, parentName: e.target.value })
+                              }
+                              required={!isExistingParent}
+                            />
+                          </div>
+
+                          {/* Parent Email (for registration) */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Parent Email (for login) *
+                            </label>
+                            <Input
+                              type="email"
+                              placeholder="parent@example.com"
+                              value={formData.parentEmail}
+                              onChange={(e) =>
+                                setFormData({ ...formData, parentEmail: e.target.value })
+                              }
+                              required={!isExistingParent}
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Parent Password (for login) *
+                            </label>
+                            <Input
+                              type="password"
+                              placeholder="Enter password for new parent account"
+                              value={formData.parentPassword}
+                              onChange={(e) =>
+                                setFormData({ ...formData, parentPassword: e.target.value })
+                              }
+                              required={!isExistingParent}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* If editing, just show parent name as a regular field (can't easily re-link here) */}
+                  {editingStudent && (
+                    <div className="space-y-4">
+                      {/* Parent Name */}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Parent Password (for login) *
+                          Parent Name *
                         </label>
                         <Input
-                          type="password"
-                          placeholder="Enter password for parent account"
-                          value={formData.parentPassword}
+                          placeholder="Enter parent's full name"
+                          value={formData.parentName}
                           onChange={(e) =>
-                            setFormData({ ...formData, parentPassword: e.target.value })
+                            setFormData({ ...formData, parentName: e.target.value })
                           }
                           required
                         />
                       </div>
-                    </>
+                    </div>
                   )}
 
                   {/* Status (only show when editing) */}
@@ -487,6 +557,7 @@ const StudentList = ({
                           teacherId: "",
                           status: "active",
                         });
+                        setIsExistingParent(false);
                       }}
                     >
                       Cancel

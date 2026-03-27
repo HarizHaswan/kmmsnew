@@ -6,7 +6,8 @@ const paymentSchema = new mongoose.Schema({
   amountPaid: { type: Number, required: true },
   paidAt: { type: Date, default: Date.now },
   method: { type: String, default: "cash" },
-  note: { type: String }
+  note: { type: String },
+  receiptUrl: { type: String }
 }, { timestamps: true });
 
 module.exports = mongoose.model("Payment", paymentSchema);

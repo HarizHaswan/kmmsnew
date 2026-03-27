@@ -47,4 +47,29 @@ router.post("/profile", protect, upload.single("image"), async (req, res) => {
   }
 });
 
+const attachmentUploadFolder = "uploads/attachments";
+if (!fs.existsSync(attachmentUploadFolder)) {
+  fs.mkdirSync(attachmentUploadFolder, { recursive: true });
+}
+
+const attachmentStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, attachmentUploadFolder);
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, `attachment_${Date.now()}${ext}`);
+  },
+});
+const uploadAttachment = multer({ storage: attachmentStorage });
+
+router.post("/attachment", protect, uploadAttachment.single("file"), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: "No file uploaded" });
+  }
+
+  const fileUrl = `/uploads/attachments/${req.file.filename}`;
+  res.json({ message: "File uploaded successfully", url: fileUrl });
+});
+
 module.exports = router;

@@ -349,9 +349,20 @@ const TeacherList = ({ teachers = [], onAdd, onUpdate, onDelete }) => {
             </TableHeader>
 
             <TableBody>
-              {filteredTeachers.map((teacher) => (
+              {filteredTeachers.map((teacher, index) => (
                 <TableRow key={teacher._id || teacher.id}>
-                  <TableCell className="font-medium">{teacher.name}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-3">
+                      <span className="text-gray-500 font-bold text-lg min-w-[24px]">
+                        {index + 1}.
+                      </span>
+                      <div>
+                        <p className="font-medium text-gray-900">
+                          {teacher.name}
+                        </p>
+                      </div>
+                    </div>
+                  </TableCell>
                   <TableCell>{teacher.email}</TableCell>
                   <TableCell>{teacher.phone || "-"}</TableCell>
                   <TableCell>{teacher.classAssigned || "-"}</TableCell>
@@ -403,14 +414,6 @@ const TeacherList = ({ teachers = [], onAdd, onUpdate, onDelete }) => {
                       }}
                     >
                       <Edit className="w-4 h-4 text-white-500" />
-                    </Button>
-
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => onDelete(teacher._id || teacher.id)}
-                    >
-                      <Trash2 className="w-4 h-4 text-white-500" />
                     </Button>
                   </TableCell>
                 </TableRow>
