@@ -1,4 +1,5 @@
 const Payment = require("../models/Payment");
+const { getUserIdsByRole, createNotificationsForUsers } = require('../../utils/notificationHelper');
 
 // GET all payments
 exports.getPayments = async (req, res, next) => {
@@ -15,6 +16,23 @@ exports.getPayments = async (req, res, next) => {
 exports.createPayment = async (req, res, next) => {
   try {
     const payment = await Payment.create(req.body);
+
+    // Notify Admins
+    try {
+      const adminIds = await getUserIdsByRole('admin');
+      if (adminIds && adminIds.length > 0) {
+        await createNotificationsForUsers(adminIds, {
+          type: 'payment',
+          title: 'New Payment Received',
+          body: `A new fee payment of RM${payment.amount || '0'} was recorded.`,
+          data: { paymentId: payment._id },
+          createdBy: req.user ? req.user.id : null
+        });
+      }
+    } catch (notifErr) {
+      console.error("Payment Notification Error:", notifErr);
+    }
+
     res.status(201).json(payment);
   } catch (err) {
     next(err);

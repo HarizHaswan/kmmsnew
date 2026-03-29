@@ -20,11 +20,11 @@ const LoginForm = ({ role, onSubmit, onBack }) => {
   };
 
   return (
-    <div className="min-h-screen grid md:grid-cols-2 bg-gray-100">
+    <div className="min-h-screen grid md:grid-cols-2 bg-brand-bg">
 
       {/* LEFT SIDE PANEL (same as login main screen) */}
       <div className="hidden md:flex flex-col justify-center items-center text-white 
-                      bg-gradient-to-br from-pink-500 via-purple-500 to-orange-400 p-12">
+                      bg-gradient-to-br from-primary via-purple-500 to-orange-400 p-12">
         <div className="text-center max-w-md">
           <div className="text-6xl mb-6">🎓</div>
           <h1 className="text-4xl font-bold mb-4">Kindergarten Management System</h1>

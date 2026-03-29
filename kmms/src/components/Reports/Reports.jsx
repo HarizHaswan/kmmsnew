@@ -152,14 +152,14 @@ const Reports = () => {
         <div className="bg-white p-1 rounded-lg border shadow-sm flex">
           <button
             onClick={() => setActiveReport("attendance")}
-            className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${activeReport === "attendance" ? "bg-blue-100 text-blue-700 shadow-sm" : "text-gray-600 hover:bg-gray-50"
+            className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${activeReport === "attendance" ? "bg-accent-light text-accent-dark shadow-sm" : "text-gray-600 hover:bg-white"
               }`}
           >
             Attendance Report
           </button>
           <button
             onClick={() => setActiveReport("financial")}
-            className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${activeReport === "financial" ? "bg-green-100 text-green-700 shadow-sm" : "text-gray-600 hover:bg-gray-50"
+            className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${activeReport === "financial" ? "bg-green-100 text-green-700 shadow-sm" : "text-gray-600 hover:bg-white"
               }`}
           >
             Financial Report
@@ -173,7 +173,7 @@ const Reports = () => {
           <div className="bg-white p-4 rounded-xl border shadow-sm flex flex-col md:flex-row gap-6 items-start md:items-center">
             <div className="flex flex-col gap-1.5 w-full md:w-auto">
               <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide ml-1">Select Class</label>
-              <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 focus-within:ring-2 focus-within:ring-blue-500">
+              <div className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg border border-gray-200 focus-within:ring-2 focus-within:ring-accent">
                 <Users className="w-4 h-4 text-gray-400" />
                 <select
                   className="bg-transparent text-sm font-medium text-gray-700 outline-none cursor-pointer w-full md:w-40"
@@ -189,7 +189,7 @@ const Reports = () => {
             <div className="hidden md:block h-10 w-px bg-gray-200 mt-6"></div>
             <div className="flex flex-col gap-1.5 w-full md:w-auto">
               <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide ml-1">Select Month</label>
-              <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 focus-within:ring-2 focus-within:ring-blue-500">
+              <div className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg border border-gray-200 focus-within:ring-2 focus-within:ring-accent">
                 <Calendar className="w-4 h-4 text-gray-400" />
                 <input type="month" className="bg-transparent text-sm font-medium text-gray-700 outline-none cursor-pointer w-full md:w-auto"
                   value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)} />
@@ -198,12 +198,12 @@ const Reports = () => {
           </div>
 
           {loading ? (
-            <div className="flex justify-center py-20"><Loader2 className="w-10 h-10 animate-spin text-blue-500" /></div>
+            <div className="flex justify-center py-20"><Loader2 className="w-10 h-10 animate-spin text-accent" /></div>
           ) : stats ? (
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <Card><CardContent className="p-6 flex items-center gap-4">
-                  <div className="p-3 bg-blue-100 text-blue-600 rounded-full"><Calendar className="w-6 h-6" /></div>
+                  <div className="p-3 bg-accent-light text-accent rounded-full"><Calendar className="w-6 h-6" /></div>
                   <div><p className="text-sm text-gray-500 font-medium">Days Recorded</p><h3 className="text-2xl font-bold text-gray-900">{stats.totalDays}</h3></div>
                 </CardContent></Card>
                 <Card><CardContent className="p-6 flex items-center gap-4">
@@ -252,7 +252,7 @@ const Reports = () => {
           <div className="bg-white p-4 rounded-xl border shadow-sm flex flex-col md:flex-row gap-4 items-start md:items-center">
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide ml-1">Filter by Month</label>
-              <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg border border-gray-200">
+              <div className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg border border-gray-200">
                 <Calendar className="w-4 h-4 text-gray-400" />
                 <input type="month" className="bg-transparent text-sm font-medium text-gray-700 outline-none cursor-pointer"
                   value={finMonth} onChange={e => setFinMonth(e.target.value)} />
@@ -296,12 +296,12 @@ const Reports = () => {
                     <div className="flex justify-between items-start">
                       <div>
                         <p className="text-sm font-medium text-gray-500">Net Balance</p>
-                        <h3 className={`text-2xl font-bold mt-2 ${netBalance >= 0 ? "text-blue-600" : "text-red-600"}`}>
+                        <h3 className={`text-2xl font-bold mt-2 ${netBalance >= 0 ? "text-accent" : "text-red-600"}`}>
                           {netBalance < 0 ? "-" : ""}RM {Math.abs(netBalance).toLocaleString()}
                         </h3>
                         <p className="text-xs text-gray-400 mt-1">Revenue minus salaries</p>
                       </div>
-                      <div className={`p-2 rounded-lg ${netBalance >= 0 ? "bg-blue-50 text-blue-600" : "bg-red-50 text-red-600"}`}>
+                      <div className={`p-2 rounded-lg ${netBalance >= 0 ? "bg-brand-bg text-accent" : "bg-red-50 text-red-600"}`}>
                         {netBalance >= 0 ? <TrendingUp className="w-5 h-5" /> : <TrendingDown className="w-5 h-5" />}
                       </div>
                     </div>
@@ -355,7 +355,7 @@ const Reports = () => {
                     ) : (
                       <div className="space-y-3 max-h-72 overflow-y-auto pr-1">
                         {allTransactions.map((t) => (
-                          <div key={t.id} className="flex justify-between items-center p-3 border-b last:border-0 hover:bg-gray-50 transition-colors rounded-lg">
+                          <div key={t.id} className="flex justify-between items-center p-3 border-b last:border-0 hover:bg-white transition-colors rounded-lg">
                             <div className="flex items-center gap-3">
                               <div className={`p-2 rounded-full ${t.type === "income" ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"}`}>
                                 {t.type === "income" ? <Receipt className="w-4 h-4" /> : <CreditCard className="w-4 h-4" />}

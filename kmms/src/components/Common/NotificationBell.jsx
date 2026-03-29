@@ -44,7 +44,7 @@ export default function NotificationBell() {
 
   return (
     <div className="relative">
-      <button onClick={() => setOpen(o => !o)} className="p-2 rounded-full hover:bg-gray-100 transition relative">
+      <button onClick={() => setOpen(o => !o)} className="p-2 rounded-full hover:bg-brand-bg transition relative">
         <span className="text-xl">🔔</span>
         {unreadCount > 0 && <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full px-1.5">{unreadCount}</span>}
       </button>

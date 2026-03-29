@@ -139,7 +139,7 @@ const ActivitiesTracking = ({ teacherId }) => {
           />
 
           <div className="flex gap-2">
-            <button className="flex-1 p-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 flex items-center justify-center gap-2">
+            <button className="flex-1 p-3 bg-brand-bg text-gray-700 rounded-lg hover:bg-gray-200 flex items-center justify-center gap-2">
               <Upload className="w-5 h-5" />
               Upload Photo
             </button>
@@ -173,7 +173,7 @@ const ActivitiesTracking = ({ teacherId }) => {
               return (
                 <div
                   key={act._id}
-                  className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200"
+                  className="p-4 bg-gradient-to-r from-brand-bg to-indigo-50 rounded-lg border border-blue-200"
                 >
                   <div className="flex justify-between items-start">
                     <div className="flex items-start gap-3">

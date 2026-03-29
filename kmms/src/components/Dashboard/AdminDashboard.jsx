@@ -165,14 +165,14 @@ export default function AdminDashboard({ setActiveTab }) {
       title: "Total Students",
       value: totalStudents,
       icon: Users,
-      color: "from-blue-400 to-blue-600",
+      color: "from-accent-light to-accent",
       onClick: () => setActiveTab("users"),
     },
     {
       title: "Active Teachers",
       value: activeTeachers,
       icon: BookOpen,
-      color: "from-green-400 to-green-600",
+      color: "from-primary-light to-primary",
       onClick: () => setActiveTab("teachers"),
     },
     {
@@ -255,7 +255,7 @@ export default function AdminDashboard({ setActiveTab }) {
             ) : (
               <div className="space-y-3 max-h-64 overflow-y-auto pr-2">
                 {pendingLeavesList.map(leave => (
-                  <div key={leave._id} className="p-3 border rounded-lg bg-gray-50 flex flex-col xl:flex-row xl:items-center justify-between gap-3">
+                  <div key={leave._id} className="p-3 border rounded-lg bg-white flex flex-col xl:flex-row xl:items-center justify-between gap-3">
                     <div>
                       <p className="text-sm font-semibold text-gray-800">{leave.teacher?.name || 'Unknown Teacher'}</p>
                       <p className="text-xs text-gray-500">

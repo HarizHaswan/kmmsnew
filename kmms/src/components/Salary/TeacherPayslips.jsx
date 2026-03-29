@@ -83,7 +83,7 @@ const TeacherPayslips = () => {
                                     )}
                                 </div>
 
-                                <div className="p-6 bg-gray-50/50 flex-1">
+                                <div className="p-6 bg-white/50 flex-1">
                                     <div className="flex justify-between items-center mb-1">
                                         <span className="text-sm text-gray-500">Net Pay</span>
                                         <span className="text-xl font-bold text-indigo-600">RM {netPay.toLocaleString()}</span>
@@ -99,7 +99,7 @@ const TeacherPayslips = () => {
                                     </button>
                                     {/* Note: In a real app, clicking Download would generate a PDF */}
                                     <button
-                                        className="w-full py-2 border border-gray-200 text-gray-600 rounded-xl text-sm font-medium hover:bg-gray-50 flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
+                                        className="w-full py-2 border border-gray-200 text-gray-600 rounded-xl text-sm font-medium hover:bg-white flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
                                         disabled={salary.status !== 'paid'}
                                         onClick={() => alert("PDF download feature not implemented yet.")}
                                     >
@@ -134,14 +134,14 @@ const TeacherPayslips = () => {
                                 <span className="font-semibold text-red-600">-RM {selectedSlip.deduction.toLocaleString()}</span>
                             </div>
 
-                            <div className="flex justify-between items-center py-4 mt-2 bg-gray-50 rounded-xl px-4">
+                            <div className="flex justify-between items-center py-4 mt-2 bg-white rounded-xl px-4">
                                 <span className="font-bold text-gray-700">Net Pay</span>
                                 <span className="font-bold text-xl text-indigo-600">RM {(selectedSlip.baseSalary + selectedSlip.allowance - selectedSlip.deduction).toLocaleString()}</span>
                             </div>
 
                             <button
                                 onClick={() => setSelectedSlip(null)}
-                                className="w-full mt-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-xl transition-colors"
+                                className="w-full mt-4 bg-brand-bg hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-xl transition-colors"
                             >
                                 Close
                             </button>

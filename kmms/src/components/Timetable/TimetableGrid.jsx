@@ -71,7 +71,7 @@ const TimetableGrid = ({ slots = [], onDeleteSlot }) => {
         </div>
 
         {days.map((day) => (
-          <div key={day} className="flex items-center group relative h-16 border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors z-10">
+          <div key={day} className="flex items-center group relative h-16 border-b border-gray-100 last:border-0 hover:bg-white transition-colors z-10">
             
             {/* Day Label */}
             <div className="w-24 flex-shrink-0 font-semibold text-gray-700 text-sm bg-white z-20">
@@ -79,7 +79,7 @@ const TimetableGrid = ({ slots = [], onDeleteSlot }) => {
             </div>
 
             {/* Timetable Lane */}
-            <div className="flex-1 relative h-full bg-gray-50/50 rounded-lg">
+            <div className="flex-1 relative h-full bg-white/50 rounded-lg">
               
               {/* Grid Lines for specified intervals */}
               {timeIntervals.map((time) => (
@@ -99,7 +99,7 @@ const TimetableGrid = ({ slots = [], onDeleteSlot }) => {
                   return (
                     <div
                       key={slot.id}
-                      className="absolute top-1 bottom-1 rounded-md px-2 py-1 text-xs shadow-sm bg-blue-100 border-l-4 border-blue-500 text-blue-800 overflow-hidden flex flex-col justify-center hover:z-30 hover:shadow-md transition-all cursor-pointer group/slot"
+                      className="absolute top-1 bottom-1 rounded-md px-2 py-1 text-xs shadow-sm bg-accent-light border-l-4 border-accent text-accent-dark overflow-hidden flex flex-col justify-center hover:z-30 hover:shadow-md transition-all cursor-pointer group/slot"
                       style={style}
                       title={`${slot.startTime} - ${slot.endTime}: ${slot.subject}`}
                     >

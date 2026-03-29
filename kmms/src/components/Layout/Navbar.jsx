@@ -12,7 +12,7 @@ const Navbar = ({ user, onMenuClick, onLogout }) => {
         {/* Left: menu button (mobile) + title */}
         <div className="flex items-center gap-3">
           <button
-            className="md:hidden p-2 rounded-lg hover:bg-gray-100"
+            className="md:hidden p-2 rounded-lg hover:bg-brand-bg"
             onClick={onMenuClick}
           >
             <Menu className="w-5 h-5 text-gray-700" />
@@ -22,7 +22,7 @@ const Navbar = ({ user, onMenuClick, onLogout }) => {
             <p className="text-xs uppercase tracking-wide text-gray-400">
               {user.role}
             </p>
-            <h1 className="text-lg md:text-xl font-bold text-pink-600">
+            <h1 className="text-lg md:text-xl font-bold text-primary">
               Kindergarten Management System
             </h1>
           </div>
@@ -56,12 +56,12 @@ const Navbar = ({ user, onMenuClick, onLogout }) => {
           {open && (
             <div className="absolute right-0 top-12 w-48 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50 animate-in fade-in zoom-in-95 duration-200 slide-in-from-top-2">
               
-              <button className="flex w-full items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors">
+              <button className="flex w-full items-center gap-2 px-4 py-2 text-gray-700 hover:bg-brand-bg transition-colors">
                 <User className="w-4 h-4" />
                 Profile
               </button>
 
-              <button className="flex w-full items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors">
+              <button className="flex w-full items-center gap-2 px-4 py-2 text-gray-700 hover:bg-brand-bg transition-colors">
                 <Settings className="w-4 h-4" />
                 Settings
               </button>

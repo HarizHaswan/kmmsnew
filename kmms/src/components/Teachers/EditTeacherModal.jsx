@@ -21,7 +21,7 @@ const EditTeacherModal = ({ teacher, onClose, onSave }) => {
       <div className="bg-white w-full max-w-lg rounded-xl shadow-lg">
         <div className="p-4 border-b flex justify-between">
           <h3 className="text-lg font-bold">Edit Teacher</h3>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg">
+          <button onClick={onClose} className="p-2 hover:bg-brand-bg rounded-lg">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -59,7 +59,7 @@ const EditTeacherModal = ({ teacher, onClose, onSave }) => {
             className="w-full p-3 border rounded-lg"
           />
 
-          <button className="w-full p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 mt-2">
+          <button className="w-full p-3 bg-accent text-white rounded-lg hover:bg-accent-dark mt-2">
             Save Changes
           </button>
         </form>

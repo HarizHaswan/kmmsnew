@@ -157,7 +157,7 @@ const LeaveManagement = () => {
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm text-gray-600">
-            <thead className="bg-gray-50 text-gray-700 uppercase text-xs font-semibold">
+            <thead className="bg-white text-gray-700 uppercase text-xs font-semibold">
               <tr>
                 <th className="px-6 py-4">Teacher</th>
                 <th className="px-6 py-4">Reason</th>
@@ -177,7 +177,7 @@ const LeaveManagement = () => {
                 </tr>
               ) : (
                 filteredLeaves.map((req) => (
-                  <tr key={req._id} className="hover:bg-gray-50 transition-colors">
+                  <tr key={req._id} className="hover:bg-white transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex flex-col">
                         <span className="font-medium text-gray-900">{req.teacher?.name || "Unknown Teacher"}</span>

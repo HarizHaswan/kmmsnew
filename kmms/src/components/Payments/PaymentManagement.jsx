@@ -275,7 +275,7 @@ const PaymentManagement = ({ userId, role }) => {
       {activeTab === "invoices" && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           <table className="w-full text-left text-sm text-gray-600">
-            <thead className="bg-gray-50 text-gray-700 uppercase text-xs font-semibold">
+            <thead className="bg-white text-gray-700 uppercase text-xs font-semibold">
               <tr>
                 <th className="px-6 py-4">Student</th>
                 <th className="px-6 py-4">Category</th>
@@ -291,7 +291,7 @@ const PaymentManagement = ({ userId, role }) => {
                 <tr><td colSpan="6" className="px-6 py-8 text-center text-gray-500">No invoices found.</td></tr>
               ) : (
                 invoices.map(inv => (
-                  <tr key={inv._id} className="hover:bg-gray-50 transition-colors">
+                  <tr key={inv._id} className="hover:bg-white transition-colors">
                     <td className="px-6 py-4 font-medium text-gray-900">
                       {inv.studentId?.name || students.find(s => s._id === inv.studentId)?.name || 'Unknown'}
                     </td>
@@ -364,7 +364,7 @@ const PaymentManagement = ({ userId, role }) => {
       {activeTab === "ledger" && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           <table className="w-full text-left text-sm text-gray-600">
-            <thead className="bg-gray-50 text-gray-700 uppercase text-xs font-semibold">
+            <thead className="bg-white text-gray-700 uppercase text-xs font-semibold">
               <tr>
                 <th className="px-6 py-4">Date</th>
                 <th className="px-6 py-4">Method</th>
@@ -388,7 +388,7 @@ const PaymentManagement = ({ userId, role }) => {
                   }
 
                   return (
-                    <tr key={pay._id} className="hover:bg-gray-50 transition-colors">
+                    <tr key={pay._id} className="hover:bg-white transition-colors">
                       <td className="px-6 py-4 text-gray-500 whitespace-nowrap">{new Date(pay.paidAt).toLocaleString()}</td>
                       <td className="px-6 py-4 font-medium text-gray-700">{pay.method}</td>
                       <td className="px-6 py-4 text-gray-900">{studName}</td>
@@ -469,7 +469,7 @@ const PaymentManagement = ({ userId, role }) => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-xl">
             <h3 className="text-xl font-bold text-gray-900 mb-4">Record Payment</h3>
-            <div className="mb-4 space-y-1 text-sm bg-gray-50 p-3 rounded-lg border border-gray-200">
+            <div className="mb-4 space-y-1 text-sm bg-white p-3 rounded-lg border border-gray-200">
               <p><span className="text-gray-500">Invoice Amount:</span> <strong className="float-right text-gray-900">RM {selectedInvoice.amount}</strong></p>
               <p><span className="text-gray-500">Student:</span> <strong className="float-right text-gray-900">{selectedInvoice.studentId?.name || students.find(s => s._id === selectedInvoice.studentId)?.name || 'Unknown'}</strong></p>
             </div>
@@ -532,7 +532,7 @@ const PaymentManagement = ({ userId, role }) => {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Paying Amount (RM)</label>
                 <input type="number" required readOnly
-                  className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none cursor-not-allowed font-bold"
+                  className="w-full p-2.5 bg-white border border-gray-200 rounded-xl text-sm outline-none cursor-not-allowed font-bold"
                   value={parentPayForm.amountPaid} />
               </div>
 

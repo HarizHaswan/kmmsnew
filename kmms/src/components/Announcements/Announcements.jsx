@@ -205,7 +205,7 @@ export default function Announcements() {
               <p className="font-semibold text-lg">{a.title}</p>
               {/* Optional: Show Badge for Admins to know target audience */}
               {role === "admin" && a.targetRole !== "all" && (
-                <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 border uppercase font-bold">
+                <span className="text-xs px-2 py-0.5 rounded-full bg-brand-bg text-gray-500 border uppercase font-bold">
                   {a.targetRole}
                 </span>
               )}
@@ -234,7 +234,7 @@ export default function Announcements() {
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-600 underline"
+                    className="text-accent underline"
                   >
                     {children}
                   </a>

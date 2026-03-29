@@ -1,4 +1,6 @@
 const Invoice = require("../models/Invoice");
+const Student = require("../models/Student");
+const { createNotification } = require('../../utils/notificationHelper');
 
 // GET all invoices
 exports.getInvoices = async (req, res, next) => {
@@ -27,6 +29,26 @@ exports.getInvoice = async (req, res, next) => {
 exports.createInvoice = async (req, res, next) => {
   try {
     const invoice = await Invoice.create(req.body);
+
+    // Notify Parent
+    try {
+      if (invoice.studentId) {
+        const student = await Student.findById(invoice.studentId);
+        if (student && student.parentId) {
+          await createNotification({
+            recipientId: student.parentId,
+            type: 'invoice',
+            title: 'Pending Kindergarten Fee',
+            body: `You have a new pending fee: ${invoice.feeItem || 'Invoice'} (RM${invoice.amount || 0}).`,
+            data: { invoiceId: invoice._id },
+            createdBy: req.user ? req.user.id : null
+          });
+        }
+      }
+    } catch (notifErr) {
+      console.error("Invoice Notification Error:", notifErr);
+    }
+
     res.status(201).json(invoice);
   } catch (err) {
     next(err);

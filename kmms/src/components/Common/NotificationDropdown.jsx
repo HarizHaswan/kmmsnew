@@ -18,7 +18,7 @@ export default function NotificationDropdown({ notifications, refresh }) {
         <span className="font-semibold">Notifications</span>
         <button
           onClick={handleMarkAll}
-          className="text-sm text-blue-600 hover:underline"
+          className="text-sm text-accent hover:underline"
         >
           Mark all
         </button>
@@ -32,7 +32,7 @@ export default function NotificationDropdown({ notifications, refresh }) {
             <div
               key={n._id}
               className={`px-3 py-2 border-b cursor-pointer ${
-                n.isRead ? "bg-gray-50" : "bg-white"
+                n.isRead ? "bg-white" : "bg-white"
               }`}
               onClick={() => handleMark(n._id)}
             >

@@ -68,7 +68,7 @@ const TeacherDashboard = ({ setActiveTab, user }) => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full pt-20">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-accent" />
       </div>
     );
   }
@@ -83,7 +83,7 @@ const TeacherDashboard = ({ setActiveTab, user }) => {
           title="My Students"
           value={stats.studentCount}
           icon={Users}
-          color="bg-blue-500"
+          color="bg-accent"
           onClick={() => setActiveTab("students")}
         />
         <DashboardCard

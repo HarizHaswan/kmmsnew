@@ -239,12 +239,12 @@ const LeaveRequest = ({ teacherId }) => {
         {/* Right Column: List */}
         <div className="lg:col-span-2 space-y-4">
           <h3 className="font-bold text-gray-800 text-lg flex items-center gap-2">
-            My History <span className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full">{leaves.length}</span>
+            My History <span className="bg-brand-bg text-gray-600 text-xs px-2 py-1 rounded-full">{leaves.length}</span>
           </h3>
 
           {leaves.length === 0 ? (
             <div className="bg-white rounded-2xl p-12 text-center border border-dashed border-gray-300">
-              <div className="bg-gray-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="bg-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <FileText className="w-8 h-8 text-gray-400" />
               </div>
               <h4 className="text-gray-900 font-medium">No leave requests found</h4>
@@ -254,7 +254,7 @@ const LeaveRequest = ({ teacherId }) => {
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm text-gray-600">
-                  <thead className="bg-gray-50 text-gray-700 uppercase text-xs font-semibold">
+                  <thead className="bg-white text-gray-700 uppercase text-xs font-semibold">
                     <tr>
                       <th className="px-6 py-4">Reason</th>
                       <th className="px-6 py-4">Duration</th>
@@ -265,7 +265,7 @@ const LeaveRequest = ({ teacherId }) => {
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {leaves.map((leave) => (
-                      <tr key={leave._id} className="hover:bg-gray-50 transition-colors">
+                      <tr key={leave._id} className="hover:bg-white transition-colors">
                         <td className="px-6 py-4 font-medium text-gray-900 max-w-xs truncate">
                           {leave.reason}
                         </td>

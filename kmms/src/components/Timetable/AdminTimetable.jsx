@@ -147,21 +147,40 @@ export default function AdminTimetable() {
       </div>
 
       {/* --- CLASS TABS --- */}
-      <div className="bg-white p-2 rounded-lg border shadow-sm flex flex-wrap gap-2">
+      <div className="bg-white p-5 rounded-lg border shadow-sm flex flex-col gap-5">
         {classes.length > 0 ? (
-          classes.map((cls) => (
-            <button
-              key={cls._id}
-              onClick={() => setSelectedClassId(cls._id)}
-              className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
-                selectedClassId === cls._id
-                  ? "bg-blue-100 text-blue-700 border border-blue-200"
-                  : "bg-transparent text-gray-600 hover:bg-gray-50"
-              }`}
-            >
-              Class {cls.className || cls.name}
-            </button>
-          ))
+          [4, 5, 6, "Other"].map((age) => {
+            // Group by yearGroup if it exists, otherwise extract from className leading number
+            const ageClasses = classes.filter(c => {
+               const parsedYear = c.yearGroup || parseInt((c.className || c.name || "").charAt(0));
+               let determinedAge = [4, 5, 6].includes(parsedYear) ? parsedYear : "Other";
+               return determinedAge === age;
+            });
+
+            if (ageClasses.length === 0) return null;
+
+            return (
+              <div key={age} className="flex flex-col gap-2">
+                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                  {age === "Other" ? "Other Classes" : `${age} Years Old`}
+                </h3>
+                <div className="flex flex-wrap gap-2 border-l-2 border-primary-light pl-3">
+                  {ageClasses.sort((a, b) => (a.className || a.name || "").localeCompare(b.className || b.name || "")).map((cls) => (
+                    <button
+                      key={cls._id}
+                      onClick={() => setSelectedClassId(cls._id)}
+                      className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${selectedClassId === cls._id
+                        ? "bg-primary-light text-primary-dark border border-primary-light shadow-sm font-bold"
+                        : "bg-white text-gray-600 hover:bg-brand-bg border border-gray-100 shadow-sm"
+                        }`}
+                    >
+                      Class {cls.className || cls.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+          })
         ) : (
           <span className="text-sm text-gray-500 px-4">No classes found. Add a class first.</span>
         )}
@@ -242,7 +261,7 @@ export default function AdminTimetable() {
               </div>
 
               {/* Submit Button */}
-              <Button type="submit" size="sm" className="w-full bg-pink-600 hover:bg-pink-700 mt-2"><Plus className="w-4 h-4 mr-2" /> Add Slot
+              <Button type="submit" size="sm" className="w-full bg-primary hover:bg-primary-dark mt-2"><Plus className="w-4 h-4 mr-2" /> Add Slot
               </Button>
             </form>
           </CardContent>

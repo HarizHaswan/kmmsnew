@@ -106,7 +106,7 @@ const ParentDashboard = ({ setActiveTab, user }) => {
           title="Today's Activities"
           value={childActivities.length}
           icon={Camera}
-          color="bg-blue-500"
+          color="bg-accent"
           onClick={() => setActiveTab("child-activities")}
         />
 

@@ -31,7 +31,7 @@ export function SelectItem({ className = "", ...props }) {
   return (
     <SelectPrimitive.Item
       className={
-        "px-3 py-2 rounded hover:bg-gray-100 cursor-pointer " + className
+        "px-3 py-2 rounded hover:bg-brand-bg cursor-pointer " + className
       }
       {...props}
     />

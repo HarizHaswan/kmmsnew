@@ -1,5 +1,6 @@
 const Attendance = require("../models/Attendance");
 const Student = require("../models/Student");
+const { createNotificationsForUsers } = require("../../utils/notificationHelper");
 
 // GET Attendance for a specific Date and Class
 exports.getAttendance = async (req, res, next) => {
@@ -69,6 +70,30 @@ exports.saveAttendance = async (req, res, next) => {
       { records },
       { new: true, upsert: true, setDefaultsOnInsert: true }
     );
+
+    // Notify Parents of Absentees
+    try {
+      const absentRecords = records.filter(r => r.status === 'Absent');
+      if (absentRecords.length > 0) {
+        const studentIds = absentRecords.map(r => r.studentId);
+        const students = await Student.find({ _id: { $in: studentIds } });
+        
+        const parentIds = [];
+        students.forEach(s => {
+          if (s.parentId) parentIds.push(s.parentId);
+        });
+
+        if (parentIds.length > 0) {
+           await createNotificationsForUsers(parentIds, {
+              type: 'attendance',
+              title: 'Student Absence Notice',
+              body: `Your child was marked absent today (${date}).`,
+              data: { classId, date },
+              createdBy: req.user ? req.user.id : null
+           });
+        }
+      }
+    } catch (notifErr) { console.error("Attendance Notification Error:", notifErr); }
 
     res.json(attendance);
   } catch (err) {

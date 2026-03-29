@@ -1,4 +1,5 @@
 const Timetable = require("../models/Timetable");
+const { createNotification } = require("../../utils/notificationHelper");
 
 /**
  * ADMIN — Create timetable slot
@@ -24,6 +25,22 @@ exports.createTimetable = async (req, res) => {
     color,
     createdBy: req.user._id,
   });
+
+  // Notify Teacher
+  try {
+    if (teacherId) {
+      await createNotification({
+        recipientId: teacherId,
+        type: 'timetable',
+        title: 'Timetable Updated',
+        body: `You have a new class sequence added on ${day} at ${startTime}.`,
+        data: { timetableId: slot._id },
+        createdBy: req.user._id
+      });
+    }
+  } catch (notifErr) {
+    console.error("Timetable Notification Error:", notifErr);
+  }
 
   res.status(201).json(slot);
 };

@@ -139,7 +139,7 @@ const AdminPayroll = () => {
                 </div>
                 <button
                     onClick={() => setShowModal(true)}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors flex items-center gap-2"
+                    className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors flex items-center gap-2"
                 >
                     <Plus className="w-4 h-4" />
                     Generate Payslip
@@ -170,10 +170,10 @@ const AdminPayroll = () => {
                 <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
                     <div>
                         <p className="text-sm font-medium text-gray-500">Total Payouts</p>
-                        <p className="text-2xl font-bold text-indigo-600 mt-1">RM {stats.totalPaidAmount.toLocaleString()}</p>
+                        <p className="text-2xl font-bold text-primary mt-1">RM {stats.totalPaidAmount.toLocaleString()}</p>
                     </div>
-                    <div className="p-3 bg-indigo-50 rounded-lg">
-                        <span className="text-xl font-bold text-indigo-600">RM</span>
+                    <div className="p-3 bg-primary-light rounded-lg">
+                        <span className="text-xl font-bold text-primary">RM</span>
                     </div>
                 </div>
             </div>
@@ -192,7 +192,7 @@ const AdminPayroll = () => {
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm text-gray-600">
-                        <thead className="bg-gray-50 text-gray-700 uppercase text-xs font-semibold">
+                        <thead className="bg-white text-gray-700 uppercase text-xs font-semibold">
                             <tr>
                                 <th className="px-6 py-4">Teacher</th>
                                 <th className="px-6 py-4">Period</th>
@@ -216,12 +216,12 @@ const AdminPayroll = () => {
                                     const net = base + allow - deduc;
 
                                     return (
-                                        <tr key={salary._id} className="hover:bg-gray-50 transition-colors">
+                                        <tr key={salary._id} className="hover:bg-white transition-colors">
                                             <td className="px-6 py-4">
                                                 <div className="font-medium text-gray-900">{salary.teacher?.name || 'Unknown'}</div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className="bg-indigo-50 text-indigo-700 px-2 py-1 rounded-md font-medium text-xs">
+                                                <span className="bg-primary-light text-primary-dark px-2 py-1 rounded-md font-medium text-xs">
                                                     {salary.month} {salary.year}
                                                 </span>
                                             </td>
@@ -259,7 +259,7 @@ const AdminPayroll = () => {
                                                     ) : (
                                                         salary.status === 'unpaid' && (
                                                             <>
-                                                                <button onClick={() => startEditing(salary)} className="p-1.5 bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100" title="Edit Amounts">
+                                                                <button onClick={() => startEditing(salary)} className="p-1.5 bg-white text-gray-600 rounded-lg hover:bg-brand-bg" title="Edit Amounts">
                                                                     <Edit2 className="w-4 h-4" />
                                                                 </button>
                                                                 <button onClick={() => handlePay(salary._id)} className="px-3 py-1.5 text-xs font-medium bg-green-600 text-white rounded-lg hover:bg-green-700" title="Mark as Paid">
@@ -289,7 +289,7 @@ const AdminPayroll = () => {
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Teacher</label>
                                 <select
-                                    className="w-full p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm bg-white"
+                                    className="w-full p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/30 outline-none text-sm bg-white"
                                     value={form.teacher}
                                     onChange={(e) => setForm({ ...form, teacher: e.target.value })}
                                     required
@@ -305,7 +305,7 @@ const AdminPayroll = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Month</label>
                                     <select
-                                        className="w-full p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm bg-white"
+                                        className="w-full p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/30 outline-none text-sm bg-white"
                                         value={form.month}
                                         onChange={(e) => setForm({ ...form, month: e.target.value })}
                                         required
@@ -317,7 +317,7 @@ const AdminPayroll = () => {
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Year</label>
                                     <input
                                         type="number"
-                                        className="w-full p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
+                                        className="w-full p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/30 outline-none text-sm"
                                         value={form.year}
                                         onChange={(e) => setForm({ ...form, year: e.target.value })}
                                         required
@@ -329,7 +329,7 @@ const AdminPayroll = () => {
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Base Salary (RM)</label>
                                 <input
                                     type="number"
-                                    className="w-full p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
+                                    className="w-full p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/30 outline-none text-sm"
                                     value={form.baseSalary}
                                     onChange={(e) => setForm({ ...form, baseSalary: e.target.value })}
                                     required
@@ -341,7 +341,7 @@ const AdminPayroll = () => {
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Allowances (RM)</label>
                                     <input
                                         type="number"
-                                        className="w-full p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
+                                        className="w-full p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/30 outline-none text-sm"
                                         value={form.allowance}
                                         onChange={(e) => setForm({ ...form, allowance: e.target.value })}
                                     />
@@ -350,7 +350,7 @@ const AdminPayroll = () => {
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Deductions (RM)</label>
                                     <input
                                         type="number"
-                                        className="w-full p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
+                                        className="w-full p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/30 outline-none text-sm"
                                         value={form.deduction}
                                         onChange={(e) => setForm({ ...form, deduction: e.target.value })}
                                     />
@@ -361,14 +361,14 @@ const AdminPayroll = () => {
                                 <button
                                     type="button"
                                     onClick={() => setShowModal(false)}
-                                    className="flex-1 px-4 py-2.5 border border-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors"
+                                    className="flex-1 px-4 py-2.5 border border-gray-200 text-gray-700 rounded-xl font-medium hover:bg-white transition-colors"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={submitting}
-                                    className="flex-1 px-4 py-2.5 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition-colors disabled:opacity-70 flex justify-center items-center"
+                                    className="flex-1 px-4 py-2.5 bg-primary text-white rounded-xl font-medium hover:bg-primary-dark transition-colors disabled:opacity-70 flex justify-center items-center"
                                 >
                                     {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : "Generate"}
                                 </button>

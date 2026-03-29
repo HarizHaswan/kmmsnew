@@ -58,7 +58,7 @@ export default function TeacherTimetable() {
       <Card className="min-h-[600px]">
         <CardHeader className="border-b pb-4">
           <CardTitle className="flex items-center text-lg">
-            <Calendar className="w-5 h-5 mr-2 text-blue-600" />
+            <Calendar className="w-5 h-5 mr-2 text-accent" />
             Weekly Schedule
           </CardTitle>
         </CardHeader>

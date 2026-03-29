@@ -27,7 +27,7 @@ const InputField = ({ icon: Icon, type, placeholder, value, onChange }) => {
       <input
         // If it's a password field, toggle between 'text' and 'password'
         type={isPassword ? (showPassword ? "text" : "password") : type}
-        className="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-gray-50 hover:bg-white"
+        className="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all bg-white hover:bg-white"
         placeholder={placeholder}
         value={value}
         onChange={onChange}
@@ -55,9 +55,9 @@ const InputField = ({ icon: Icon, type, placeholder, value, onChange }) => {
 const RoleCard = ({ role, icon: Icon, title, description, onClick }) => (
   <button
     onClick={() => onClick(role)}
-    className="w-full flex items-center p-4 mb-3 bg-white border border-gray-100 rounded-xl hover:shadow-lg hover:border-blue-100 hover:bg-blue-50 transition-all group text-left"
+    className="w-full flex items-center p-4 mb-3 bg-white border border-gray-100 rounded-xl hover:shadow-lg hover:border-primary-light hover:bg-brand-bg transition-all group text-left"
   >
-    <div className="h-12 w-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors">
+    <div className="h-12 w-12 rounded-full bg-primary-light text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
       <Icon className="h-6 w-6" />
     </div>
     <div className="ml-4">
@@ -93,7 +93,7 @@ const Login = ({ onLogin }) => {
   return (
     <div className="min-h-screen flex bg-white">
       {/* LEFT SIDE - BRANDING */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 to-indigo-900 text-white flex-col justify-between p-12 relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary to-primary-dark text-white flex-col justify-between p-12 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <svg className="h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
             <path d="M0 100 C 20 0 50 0 100 100 Z" fill="white" />
@@ -111,18 +111,18 @@ const Login = ({ onLogin }) => {
           <h1 className="text-5xl font-bold mb-6 leading-tight">
             SmartKindy
           </h1>
-          <p className="text-blue-100 text-lg leading-relaxed">
+          <p className="text-brand-bg text-lg leading-relaxed">
             Streamline your kindergarten management in one unified platform.
           </p>
         </div>
 
-        <div className="relative z-10 text-sm text-blue-200">
+        <div className="relative z-10 text-sm text-brand-bg/80">
           © {new Date().getFullYear()} Kindergarten Management System
         </div>
       </div>
 
       {/* RIGHT SIDE - LOGIN FORM */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
         <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl">
 
           <div className="text-center mb-8">
@@ -185,7 +185,7 @@ const Login = ({ onLogin }) => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-blue-200 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3.5 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-primary/30 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <>

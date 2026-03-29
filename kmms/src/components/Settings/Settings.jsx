@@ -59,20 +59,20 @@ export default function Settings({ user }) {
       {/* 1. READ-ONLY PROFILE INFO */}
       <div className="bg-white p-6 rounded-xl shadow border border-gray-100">
         <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-          <User className="w-5 h-5 text-blue-600" /> Profile Information
+          <User className="w-5 h-5 text-accent" /> Profile Information
         </h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-500 mb-1">Full Name</label>
-            <div className="p-3 bg-gray-50 border rounded-lg text-gray-700 font-medium">
+            <div className="p-3 bg-white border rounded-lg text-gray-700 font-medium">
               {user.name}
             </div>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-500 mb-1">Email Address</label>
-            <div className="p-3 bg-gray-50 border rounded-lg text-gray-700 flex items-center gap-2">
+            <div className="p-3 bg-white border rounded-lg text-gray-700 flex items-center gap-2">
               <Mail className="w-4 h-4 text-gray-400" />
               {user.email}
             </div>
@@ -80,7 +80,7 @@ export default function Settings({ user }) {
 
           <div>
             <label className="block text-sm font-medium text-gray-500 mb-1">Phone Number</label>
-            <div className="p-3 bg-gray-50 border rounded-lg text-gray-700 flex items-center gap-2">
+            <div className="p-3 bg-white border rounded-lg text-gray-700 flex items-center gap-2">
               <Phone className="w-4 h-4 text-gray-400" />
               {user.phone || "Not provided"}
             </div>
@@ -88,7 +88,7 @@ export default function Settings({ user }) {
 
           <div>
             <label className="block text-sm font-medium text-gray-500 mb-1">Role</label>
-            <div className="p-3 bg-gray-50 border rounded-lg text-gray-700 flex items-center gap-2 capitalize">
+            <div className="p-3 bg-white border rounded-lg text-gray-700 flex items-center gap-2 capitalize">
               <Shield className="w-4 h-4 text-gray-400" />
               {user.role}
             </div>

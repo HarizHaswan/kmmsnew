@@ -139,7 +139,7 @@ const Dashboard = ({ user, onLogout }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
+    <div className="min-h-screen bg-brand-bg flex">
       {/* Sidebar */}
       <Sidebar
         role={user.role.toLowerCase()}   // 🔥 pass normalized role to sidebar

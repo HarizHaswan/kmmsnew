@@ -7,7 +7,7 @@ export function Table({ className = "", ...props }) {
 }
 
 export function TableHeader(props) {
-  return <thead className="bg-gray-100" {...props} />;
+  return <thead className="bg-brand-bg" {...props} />;
 }
 
 export function TableHead({ className = "", ...props }) {
@@ -22,7 +22,7 @@ export function TableBody(props) {
 
 export function TableRow({ className = "", ...props }) {
   return (
-    <tr className={"border-b hover:bg-gray-50 " + className} {...props} />
+    <tr className={"border-b hover:bg-white " + className} {...props} />
   );
 }
 

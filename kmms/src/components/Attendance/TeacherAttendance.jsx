@@ -76,12 +76,13 @@ export default function TeacherAttendance({ user }) {
   }, [myClass, selectedDate]);
 
   // Handlers
-  const toggleStatus = (index) => {
+  const handleStatusChange = (index, newStatus) => {
     const newRecords = [...attendanceRecords];
-    const currentStatus = newRecords[index].status;
-    newRecords[index].status = currentStatus === "Present" ? "Absent" : "Present";
-    if (newRecords[index].status === "Present") newRecords[index].reason = "";
-    setAttendanceRecords(newRecords);
+    if (newRecords[index].status !== newStatus) {
+      newRecords[index].status = newStatus;
+      if (newStatus === "Present") newRecords[index].reason = "";
+      setAttendanceRecords(newRecords);
+    }
   };
 
   const handleReasonChange = (index, value) => {
@@ -115,7 +116,7 @@ export default function TeacherAttendance({ user }) {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4">
         <h2 className="text-2xl font-bold text-gray-900">
-          Attendance: <span className="text-blue-600">{myClass.className}</span>
+          Attendance: <span className="text-accent">{myClass.className}</span>
         </h2>
         
         <div className="flex items-center gap-2">
@@ -124,7 +125,7 @@ export default function TeacherAttendance({ user }) {
             type="date" className="border rounded-md p-2 text-sm"
             value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} 
           />
-          <Button onClick={handleSave} className="bg-blue-600 hover:bg-blue-700 ml-2">
+          <Button onClick={handleSave} className="bg-accent hover:bg-accent-dark ml-2">
             <Save className="w-4 h-4 mr-2"/> Save
           </Button>
         </div>
@@ -138,10 +139,10 @@ export default function TeacherAttendance({ user }) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {loading ? <Loader2 className="w-8 h-8 animate-spin text-blue-500 mx-auto" /> : 
+          {loading ? <Loader2 className="w-8 h-8 animate-spin text-accent mx-auto" /> : 
             attendanceRecords.length === 0 ? <div className="text-center p-8 text-gray-500">No active students found in your class.</div> : (
             <div className="space-y-2">
-               <div className="grid grid-cols-12 gap-4 bg-gray-50 p-2 rounded text-sm font-bold text-gray-600">
+               <div className="grid grid-cols-12 gap-4 bg-white p-2 rounded text-sm font-bold text-gray-600">
                  <div className="col-span-4">Name</div>
                  <div className="col-span-4 text-center">Status</div>
                  <div className="col-span-4">Reason</div>
@@ -149,11 +150,35 @@ export default function TeacherAttendance({ user }) {
 
                {attendanceRecords.map((r, i) => (
                 <div key={r.studentId} className={`grid grid-cols-12 gap-4 items-center p-3 border rounded ${r.status === "Absent" ? "bg-red-50 border-red-100" : "bg-white"}`}>
-                  <div className="col-span-4 font-medium truncate">{r.name}</div>
+                  <div className="col-span-4 font-medium truncate flex items-center gap-3">
+                    <span className="text-gray-400 font-bold text-sm select-none min-w-[20px]">
+                      {i + 1}.
+                    </span>
+                    <span title={r.name}>{r.name}</span>
+                  </div>
                   <div className="col-span-4 flex justify-center">
-                    <button onClick={() => toggleStatus(i)} className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold ${r.status === "Present" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
-                      {r.status === "Present" ? <><CheckCircle className="w-3 h-3"/> Present</> : <><XCircle className="w-3 h-3"/> Absent</>}
-                    </button>
+                    <div className="flex p-1 bg-brand-bg rounded-lg w-max shadow-inner border border-gray-200/60">
+                      <button
+                        onClick={() => handleStatusChange(i, "Present")}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all duration-200 ${
+                          r.status === "Present"
+                            ? "bg-white text-green-600 shadow-sm ring-1 ring-gray-200"
+                            : "text-gray-500 hover:text-gray-700 hover:bg-gray-200/50"
+                        }`}
+                      >
+                        <CheckCircle className="w-3.5 h-3.5" /> Present
+                      </button>
+                      <button
+                        onClick={() => handleStatusChange(i, "Absent")}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all duration-200 ${
+                          r.status === "Absent"
+                            ? "bg-white text-red-600 shadow-sm ring-1 ring-gray-200"
+                            : "text-gray-500 hover:text-gray-700 hover:bg-gray-200/50"
+                        }`}
+                      >
+                        <XCircle className="w-3.5 h-3.5" /> Absent
+                      </button>
+                    </div>
                   </div>
                   <div className="col-span-4">
                     {r.status === "Absent" && (
