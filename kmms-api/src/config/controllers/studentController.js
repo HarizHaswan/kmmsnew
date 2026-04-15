@@ -40,6 +40,7 @@ exports.createStudent = async (req, res, next) => {
     const {
       name, dateOfBirth, gender, registrationDate, classId,
       parentName, parentEmail, parentPassword, status,
+      parentIcNumber, parentPhoneNumber, homeAddress,
       isExistingParent
     } = req.body;
 
@@ -81,6 +82,9 @@ exports.createStudent = async (req, res, next) => {
       registrationDate, 
       classId,
       parentName: resolvedParentName, 
+      parentIcNumber: parentIcNumber || "",
+      parentPhoneNumber: parentPhoneNumber || "",
+      homeAddress: homeAddress || "",
       status: status || "active",
       parentId: existingParentUser ? existingParentUser._id : undefined
     });

@@ -47,6 +47,9 @@ const StudentList = ({
     gender: "",
     classId: "",
     parentName: "",
+    parentIcNumber: "",
+    parentPhoneNumber: "",
+    homeAddress: "",
     parentEmail: "",
     parentPassword: "",
     status: "active",
@@ -144,6 +147,9 @@ const StudentList = ({
       registrationDate: new Date().toISOString().split('T')[0],
       classId: formData.classId,
       parentName: formData.parentName,
+      parentIcNumber: formData.parentIcNumber,
+      parentPhoneNumber: formData.parentPhoneNumber,
+      homeAddress: formData.homeAddress,
       parentEmail: formData.parentEmail,
       parentPassword: formData.parentPassword,
       status: formData.status,
@@ -168,6 +174,9 @@ const StudentList = ({
       gender: "",
       classId: "",
       parentName: "",
+      parentIcNumber: "",
+      parentPhoneNumber: "",
+      homeAddress: "",
       parentEmail: "",
       parentPassword: "",
       status: "active",
@@ -430,6 +439,47 @@ const StudentList = ({
                               The system will link this new student to the existing parent associated with this email.
                             </p>
                           </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Parent IC Number
+                            </label>
+                            <Input
+                              placeholder="e.g., 900101-01-1234"
+                              value={formData.parentIcNumber}
+                              onChange={(e) =>
+                                setFormData({ ...formData, parentIcNumber: e.target.value })
+                              }
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Parent Phone Number
+                            </label>
+                            <Input
+                              placeholder="e.g., 012-3456789"
+                              value={formData.parentPhoneNumber}
+                              onChange={(e) =>
+                                setFormData({ ...formData, parentPhoneNumber: e.target.value })
+                              }
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Home Address
+                            </label>
+                            <textarea
+                              className="border rounded-lg p-2 w-full text-sm"
+                              rows={3}
+                              placeholder="Enter home address"
+                              value={formData.homeAddress}
+                              onChange={(e) =>
+                                setFormData({ ...formData, homeAddress: e.target.value })
+                              }
+                            />
+                          </div>
                         </div>
                       ) : (
                         <div className="space-y-4">
@@ -445,6 +495,47 @@ const StudentList = ({
                                 setFormData({ ...formData, parentName: e.target.value })
                               }
                               required={!isExistingParent}
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Parent IC Number
+                            </label>
+                            <Input
+                              placeholder="e.g., 900101-01-1234"
+                              value={formData.parentIcNumber}
+                              onChange={(e) =>
+                                setFormData({ ...formData, parentIcNumber: e.target.value })
+                              }
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Parent Phone Number
+                            </label>
+                            <Input
+                              placeholder="e.g., 012-3456789"
+                              value={formData.parentPhoneNumber}
+                              onChange={(e) =>
+                                setFormData({ ...formData, parentPhoneNumber: e.target.value })
+                              }
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Home Address
+                            </label>
+                            <textarea
+                              className="border rounded-lg p-2 w-full text-sm"
+                              rows={3}
+                              placeholder="Enter home address"
+                              value={formData.homeAddress}
+                              onChange={(e) =>
+                                setFormData({ ...formData, homeAddress: e.target.value })
+                              }
                             />
                           </div>
 
@@ -500,6 +591,47 @@ const StudentList = ({
                           required
                         />
                       </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Parent IC Number
+                        </label>
+                        <Input
+                          placeholder="e.g., 900101-01-1234"
+                          value={formData.parentIcNumber}
+                          onChange={(e) =>
+                            setFormData({ ...formData, parentIcNumber: e.target.value })
+                          }
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Parent Phone Number
+                        </label>
+                        <Input
+                          placeholder="e.g., 012-3456789"
+                          value={formData.parentPhoneNumber}
+                          onChange={(e) =>
+                            setFormData({ ...formData, parentPhoneNumber: e.target.value })
+                          }
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Home Address
+                        </label>
+                        <textarea
+                          className="border rounded-lg p-2 w-full text-sm"
+                          rows={3}
+                          placeholder="Enter home address"
+                          value={formData.homeAddress}
+                          onChange={(e) =>
+                            setFormData({ ...formData, homeAddress: e.target.value })
+                          }
+                        />
+                      </div>
                     </div>
                   )}
 
@@ -538,6 +670,9 @@ const StudentList = ({
                           gender: "",
                           classId: "",
                           parentName: "",
+                          parentIcNumber: "",
+                          parentPhoneNumber: "",
+                          homeAddress: "",
                           parentEmail: "",
                           parentPassword: "",
                           status: "active",
@@ -745,6 +880,9 @@ const StudentList = ({
                 <TableHead>Date of Birth</TableHead>
                 <TableHead>Reg. Date</TableHead>
                 <TableHead>Parent</TableHead>
+                <TableHead>Parent IC</TableHead>
+                <TableHead>Phone</TableHead>
+                <TableHead>Address</TableHead>
                 <TableHead>Class</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
@@ -791,6 +929,17 @@ const StudentList = ({
                     {/* Parent */}
                     <TableCell>{student.parentName || student.parentId?.name || "-"}</TableCell>
 
+                    {/* Parent IC */}
+                    <TableCell>{student.parentIcNumber || "-"}</TableCell>
+
+                    {/* Parent Phone */}
+                    <TableCell>{student.parentPhoneNumber || "-"}</TableCell>
+
+                    {/* Home Address */}
+                    <TableCell className="max-w-[220px] whitespace-normal break-words">
+                      {student.homeAddress || "-"}
+                    </TableCell>
+
                     {/* Class */}
                     <TableCell>{displayClass}</TableCell>
 
@@ -820,6 +969,9 @@ const StudentList = ({
                                   gender: student.gender || "",
                                   classId: student.classId?._id || student.classId || "",
                                   parentName: student.parentName || "",
+                                  parentIcNumber: student.parentIcNumber || "",
+                                  parentPhoneNumber: student.parentPhoneNumber || "",
+                                  homeAddress: student.homeAddress || "",
                                   parentEmail: "",
                                   parentPassword: "",
                                   status: student.status || "active",
@@ -844,7 +996,7 @@ const StudentList = ({
 
               {filteredStudents.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={10} className="text-center text-gray-500">
+                  <TableCell colSpan={13} className="text-center text-gray-500">
                     No students found.
                   </TableCell>
                 </TableRow>

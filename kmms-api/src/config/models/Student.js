@@ -26,6 +26,21 @@ const studentSchema = new mongoose.Schema(
       required: false,
       default: "",
     },
+    parentIcNumber: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+    parentPhoneNumber: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+    homeAddress: {
+      type: String,
+      default: "",
+      trim: true,
+    },
 
     parentId: {
       type: mongoose.Schema.Types.ObjectId,

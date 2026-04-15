@@ -7,7 +7,7 @@ const Navbar = ({ user, onMenuClick, onLogout }) => {
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-20">
-      <div className="px-4 md:px-6 py-3 flex items-center justify-between max-w-6xl mx-auto">
+      <div className="w-full max-w-[95rem] px-4 md:px-6 py-3 flex items-center justify-between mx-auto">
         
         {/* Left: menu button (mobile) + title */}
         <div className="flex items-center gap-3">

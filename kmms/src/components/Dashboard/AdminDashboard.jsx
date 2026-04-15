@@ -110,7 +110,8 @@ export default function AdminDashboard({ setActiveTab }) {
         const todayDateStr = new Date().toISOString().split('T')[0]; // "YYYY-MM-DD"
         const todayMs = new Date(todayDateStr).getTime();
 
-        const absentTeachers = leavesData.filter(leave => {
+        const absentTeacherIds = new Set(
+          leavesData.filter(leave => {
           if (leave.status && leave.status.toLowerCase() === "approved") {
             const startObj = new Date(leave.startDate);
             const endObj = leave.endDate ? new Date(leave.endDate) : startObj;
@@ -122,7 +123,12 @@ export default function AdminDashboard({ setActiveTab }) {
             if (todayMs >= st && todayMs <= en) return true;
           }
           return false;
-        });
+          }).map(leave => leave.teacher?._id).filter(Boolean)
+        );
+
+        const activeTeacherIds = new Set(activeTeachersList.map(t => t._id));
+        const absentActiveTeachersCount = [...absentTeacherIds].filter(id => activeTeacherIds.has(id)).length;
+        teachersPresentToday = Math.max(activeTeachersList.length - absentActiveTeachersCount, 0);
 
         const pending = leavesData.filter(l => l.status && l.status.toLowerCase() === "pending");
         setPendingLeavesList(pending);

@@ -1,6 +1,11 @@
 const SickLeave = require('../models/TeacherSickLeave');
 const { getUserIdsByRole, createNotificationsForUsers, createNotification } = require('../../utils/notificationHelper');
 
+const toLocalDateOnly = (dateInput) => {
+  const dt = new Date(dateInput);
+  return new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
+};
+
 // teacher submits
 exports.submitSickLeave = async (req, res) => {
   const teacherId = req.user.id;
@@ -43,6 +48,29 @@ exports.reviewSickLeave = async (req, res) => {
   const { action } = req.body; // 'approve' or 'reject'
   const sl = await SickLeave.findById(id);
   if (!sl) return res.status(404).json({ message: 'Not found' });
+  if (sl.status !== 'pending') {
+    return res.status(400).json({ message: 'This leave request has already been reviewed.' });
+  }
+
+  if (action === 'approve') {
+    const leaveStartDate = toLocalDateOnly(sl.startDate);
+    const approvalDeadline = new Date(
+      leaveStartDate.getFullYear(),
+      leaveStartDate.getMonth(),
+      leaveStartDate.getDate(),
+      7,
+      50,
+      0,
+      0
+    );
+
+    if (new Date() > approvalDeadline) {
+      return res.status(400).json({
+        message: 'Approval deadline has passed. Teacher leave must be approved before 7:50 AM on the leave start date.'
+      });
+    }
+  }
+
   sl.status = action === 'approve' ? 'approved' : 'rejected';
   sl.reviewedBy = adminId;
   sl.reviewedAt = new Date();

@@ -20,6 +20,23 @@ const LeaveRequest = ({ teacherId }) => {
     fetchLeaves();
   }, []);
 
+  const isDateInLeaveRange = (date, startDate, endDate) => {
+    const target = new Date(date);
+    const targetDay = new Date(target.getFullYear(), target.getMonth(), target.getDate()).getTime();
+    const start = new Date(startDate);
+    const startDay = new Date(start.getFullYear(), start.getMonth(), start.getDate()).getTime();
+    const end = endDate ? new Date(endDate) : start;
+    const endDay = new Date(end.getFullYear(), end.getMonth(), end.getDate()).getTime();
+    return targetDay >= startDay && targetDay <= endDay;
+  };
+
+  const today = new Date();
+  const approvedLeaveToday = leaves.find(
+    (leave) =>
+      leave.status === "approved" &&
+      isDateInLeaveRange(today, leave.startDate, leave.endDate)
+  );
+
   const fetchLeaves = async () => {
     try {
       const data = await getMyLeaves();
@@ -137,6 +154,20 @@ const LeaveRequest = ({ teacherId }) => {
           <h2 className="text-2xl font-bold text-gray-900">Leave Requests</h2>
           <p className="text-gray-500 text-sm mt-1">Submit and track your leave applications</p>
         </div>
+      </div>
+
+      <div className={`rounded-2xl border px-5 py-4 flex items-center justify-between ${approvedLeaveToday ? "bg-red-50 border-red-100" : "bg-green-50 border-green-100"}`}>
+        <div>
+          <p className="text-sm font-semibold text-gray-800">Today&apos;s Teacher Attendance Status</p>
+          <p className={`text-sm mt-1 ${approvedLeaveToday ? "text-red-700" : "text-green-700"}`}>
+            {approvedLeaveToday
+              ? "On approved leave (marked absent for today)."
+              : "Present (no approved leave for today)."}
+          </p>
+        </div>
+        <span className={`text-xs font-semibold px-3 py-1 rounded-full ${approvedLeaveToday ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"}`}>
+          {approvedLeaveToday ? "On Leave" : "Present"}
+        </span>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -258,6 +289,7 @@ const LeaveRequest = ({ teacherId }) => {
                     <tr>
                       <th className="px-6 py-4">Reason</th>
                       <th className="px-6 py-4">Duration</th>
+                      <th className="px-6 py-4">Attendance Impact</th>
                       <th className="px-6 py-4">Attachment</th>
                       <th className="px-6 py-4">Submitted</th>
                       <th className="px-6 py-4 text-right">Status</th>
@@ -278,6 +310,17 @@ const LeaveRequest = ({ teacherId }) => {
                               to {new Date(leave.endDate).toLocaleDateString()}
                             </span>
                           </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {leave.status === "approved" ? (
+                            <span className="text-xs font-medium text-red-700 bg-red-50 px-2 py-1 rounded-md">
+                              Marked absent on leave days
+                            </span>
+                          ) : (
+                            <span className="text-xs text-gray-500">
+                              No attendance impact yet
+                            </span>
+                          )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           {leave.attachment ? (

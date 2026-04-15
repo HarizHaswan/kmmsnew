@@ -123,7 +123,7 @@ export default function Students() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-2 md:p-3">
       <StudentList
         students={students}
         teachers={teachers}
