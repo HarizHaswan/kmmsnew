@@ -6,6 +6,7 @@ import { Button } from "../ui/button";
 import { useToast } from "../ui/use-toast";
 import { getClasses } from "../../api/classes";
 import { getAttendance, saveAttendance } from "../../api/attendance";
+import LiveDateTime from "../Common/LiveDateTime";
 
 export default function AdminAttendance() {
   const { toast } = useToast();
@@ -100,6 +101,7 @@ export default function AdminAttendance() {
 
   return (
     <div className="space-y-6">
+      <LiveDateTime />
       {/* Top Section */}
       <div className="flex flex-col md:flex-row justify-between items-center gap-4">
         <h2 className="text-2xl font-bold text-gray-900">Attendance (Admin)</h2>

@@ -335,6 +335,7 @@ const TeacherList = ({ teachers = [], onAdd, onUpdate, onDelete }) => {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-10">#</TableHead>
                 <TableHead>Teacher</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Phone</TableHead>
@@ -351,16 +352,12 @@ const TeacherList = ({ teachers = [], onAdd, onUpdate, onDelete }) => {
             <TableBody>
               {filteredTeachers.map((teacher, index) => (
                 <TableRow key={teacher._id || teacher.id}>
+                  <TableCell className="text-gray-400 font-bold text-sm select-none">{index + 1}.</TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-3">
-                      <span className="text-gray-500 font-bold text-lg min-w-[24px]">
-                        {index + 1}.
-                      </span>
-                      <div>
-                        <p className="font-medium text-gray-900">
-                          {teacher.name}
-                        </p>
-                      </div>
+                    <div>
+                      <p className="font-medium text-gray-900">
+                        {teacher.name}
+                      </p>
                     </div>
                   </TableCell>
                   <TableCell>{teacher.email}</TableCell>

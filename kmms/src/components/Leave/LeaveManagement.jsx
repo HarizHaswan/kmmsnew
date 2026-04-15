@@ -159,6 +159,7 @@ const LeaveManagement = () => {
           <table className="w-full text-left text-sm text-gray-600">
             <thead className="bg-white text-gray-700 uppercase text-xs font-semibold">
               <tr>
+                <th className="px-6 py-4 w-10">#</th>
                 <th className="px-6 py-4">Teacher</th>
                 <th className="px-6 py-4">Reason</th>
                 <th className="px-6 py-4">Duration</th>
@@ -171,13 +172,14 @@ const LeaveManagement = () => {
             <tbody className="divide-y divide-gray-100">
               {filteredLeaves.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan="8" className="px-6 py-12 text-center text-gray-500">
                     No leave requests match your criteria.
                   </td>
                 </tr>
               ) : (
-                filteredLeaves.map((req) => (
+                filteredLeaves.map((req, index) => (
                   <tr key={req._id} className="hover:bg-white transition-colors">
+                    <td className="px-6 py-4 text-gray-400 font-bold text-sm select-none">{index + 1}.</td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col">
                         <span className="font-medium text-gray-900">{req.teacher?.name || "Unknown Teacher"}</span>

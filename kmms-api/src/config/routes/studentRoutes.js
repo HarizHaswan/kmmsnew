@@ -1,5 +1,6 @@
 const express = require("express");
 const Student = require("../models/Student");
+const Class = require("../models/Class");
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const { protect, authorize } = require("../middleware/authMiddleware");
@@ -71,14 +72,26 @@ router.get("/", protect, async (req, res, next) => {
     let query = {};
 
     if (req.user.role === "teacher") {
-      query.teacherId = req.user._id;
+      // Filter by teacher's assigned class
+      if (req.user.classAssigned) {
+        const classDoc = await Class.findOne({
+          className: req.user.classAssigned.trim()
+        });
+        if (classDoc) {
+          query.classId = classDoc._id;
+        } else {
+          // Class not found — return empty
+          return res.json([]);
+        }
+      } else {
+        return res.json([]);
+      }
     } else if (req.user.role === "parent") {
       query.parentId = req.user._id;
     }
 
     const students = await Student.find(query)
       .populate("classId", "className yearGroup")
-      .populate("teacherId", "name email")
       .populate("parentId", "name email");
 
     // Check and update graduation status for all students
@@ -215,7 +228,6 @@ router.put("/:id", protect, authorize("admin"), async (req, res, next) => {
         context: "query",
       }
     ).populate("classId", "className yearGroup")
-      .populate("teacherId", "name email")
       .populate("parentId", "name email");
 
     if (!updated) {

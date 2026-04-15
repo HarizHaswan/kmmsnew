@@ -14,13 +14,8 @@ import {
   deleteActivityApi
 } from "../../api/activities";
 
-const ActivitiesTracking = ({ teacherId }) => {
+const ActivitiesTracking = () => {
   const { students } = useContext(KMMSContext);
-
-  // Only students belonging to this teacher
-  const myStudents = students.filter(
-    (s) => String(s.teacherId) === String(teacherId)
-  );
 
   const [activities, setActivities] = useState([]);
 
@@ -35,9 +30,9 @@ const ActivitiesTracking = ({ teacherId }) => {
     const loadData = async () => {
       try {
         const res = await getActivities();
-        // Only include activities for THIS teacher's students
+        // Show all activities for students in this teacher's class
         const filtered = res.filter((a) =>
-          myStudents.find((s) => s._id === a.studentId)
+          students.find((s) => s._id === a.studentId)
         );
         setActivities(filtered.reverse()); // recent first
       } catch (error) {
@@ -113,7 +108,7 @@ const ActivitiesTracking = ({ teacherId }) => {
             className="w-full p-3 border rounded-lg"
           >
             <option value="">Select Student</option>
-            {myStudents.map((s) => (
+            {students.map((s) => (
               <option key={s._id} value={s._id}>
                 {s.name}
               </option>

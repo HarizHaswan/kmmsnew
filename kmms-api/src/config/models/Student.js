@@ -32,10 +32,6 @@ const studentSchema = new mongoose.Schema(
       ref: "User",
     },
 
-    teacherId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
 
     dateOfBirth: Date,
     registrationDate: Date,

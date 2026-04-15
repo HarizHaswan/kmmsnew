@@ -12,11 +12,9 @@ const calculateAge = (dob) => {
 exports.getStudents = async (req, res, next) => {
   try {
     let query = {};
-    if (req.user && req.user.role === "teacher") query.teacherId = req.user._id;
     if (req.user && req.user.role === "parent") query.parentId = req.user._id;
 
     const students = await Student.find(query)
-      .populate("teacherId", "name email")
       .populate("parentId", "name email")
       .populate("classId", "className level");
 
@@ -29,7 +27,6 @@ exports.getStudents = async (req, res, next) => {
 exports.getStudent = async (req, res, next) => {
   try {
     const s = await Student.findById(req.params.id)
-      .populate("teacherId", "name")
       .populate("parentId", "name")
       .populate("classId", "className");
     if (!s) return res.status(404).json({ message: "Student not found" });
@@ -42,7 +39,7 @@ exports.createStudent = async (req, res, next) => {
   try {
     const {
       name, dateOfBirth, gender, registrationDate, classId,
-      parentName, parentEmail, parentPassword, teacherId, status,
+      parentName, parentEmail, parentPassword, status,
       isExistingParent
     } = req.body;
 
@@ -84,7 +81,6 @@ exports.createStudent = async (req, res, next) => {
       registrationDate, 
       classId,
       parentName: resolvedParentName, 
-      teacherId: teacherId || undefined, 
       status: status || "active",
       parentId: existingParentUser ? existingParentUser._id : undefined
     });

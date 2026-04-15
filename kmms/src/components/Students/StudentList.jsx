@@ -33,12 +33,13 @@ const StudentList = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [filterAgeGroup, setFilterAgeGroup] = useState("all");
   const [filterClass, setFilterClass] = useState("all");
-  const [filterTeacher, setFilterTeacher] = useState("all");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isAddClassDialogOpen, setIsAddClassDialogOpen] = useState(false);
   const [editingStudent, setEditingStudent] = useState(null);
   const [studentView, setStudentView] = useState("current");
   const [isExistingParent, setIsExistingParent] = useState(false);
+  const [historyYear, setHistoryYear] = useState("all");
+  const [historyMonth, setHistoryMonth] = useState("all");
 
   const [formData, setFormData] = useState({
     name: "",
@@ -48,7 +49,6 @@ const StudentList = ({
     parentName: "",
     parentEmail: "",
     parentPassword: "",
-    teacherId: "",
     status: "active",
   });
 
@@ -84,6 +84,17 @@ const StudentList = ({
       return false;
     }
 
+    // History year/month filter
+    if (studentView === "history") {
+      const regDate = student.registrationDate ? new Date(student.registrationDate) : null;
+      if (historyYear !== "all") {
+        if (!regDate || regDate.getFullYear() !== Number(historyYear)) return false;
+      }
+      if (historyMonth !== "all") {
+        if (!regDate || regDate.getMonth() + 1 !== Number(historyMonth)) return false;
+      }
+    }
+
     // 2. Search filter
     const q = searchQuery.toLowerCase();
     const studentName = student.name?.toLowerCase() || "";
@@ -108,13 +119,7 @@ const StudentList = ({
       filterClass === "all" ||
       studentClassId === filterClass;
 
-    // 5. Teacher filter
-    const studentTeacherId = typeof student.teacherId === 'object' ? student.teacherId?._id : student.teacherId;
-    const matchesTeacherFilter =
-      filterTeacher === "all" ||
-      studentTeacherId === filterTeacher;
-
-    return matchesSearch && matchesAgeFilter && matchesClassFilter && matchesTeacherFilter;
+    return matchesSearch && matchesAgeFilter && matchesClassFilter;
   }).sort((a, b) => (a.name || "").localeCompare(b.name || ""));
 
   // --- Stats cards ---
@@ -136,12 +141,11 @@ const StudentList = ({
       name: formData.name,
       dateOfBirth: formData.dateOfBirth,
       gender: formData.gender,
-      registrationDate: new Date().toISOString().split('T')[0], // Current date
+      registrationDate: new Date().toISOString().split('T')[0],
       classId: formData.classId,
       parentName: formData.parentName,
       parentEmail: formData.parentEmail,
       parentPassword: formData.parentPassword,
-      teacherId: formData.teacherId || undefined,
       status: formData.status,
       isExistingParent: isExistingParent
     };
@@ -166,7 +170,6 @@ const StudentList = ({
       parentName: "",
       parentEmail: "",
       parentPassword: "",
-      teacherId: "",
       status: "active",
     });
     setEditingStudent(null);
@@ -383,28 +386,6 @@ const StudentList = ({
                     </select>
                   </div>
 
-                  {/* Teacher */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Assigned Teacher
-                    </label>
-                    <select
-                      className="border rounded-lg p-2 w-full"
-                      value={formData.teacherId}
-                      onChange={(e) =>
-                        setFormData({ ...formData, teacherId: e.target.value })
-                      }
-                    >
-                      <option value="">Select Teacher (Optional)</option>
-                      {Array.isArray(teachers) &&
-                        teachers.map((t) => (
-                          <option key={t._id} value={t._id}>
-                            {t.name}
-                          </option>
-                        ))}
-                    </select>
-                  </div>
-
                   {/* Parent Section Headers/Toggles */}
                   {!editingStudent && (
                     <div className="bg-white p-4 rounded-lg border border-gray-200 mt-6 mb-4">
@@ -559,7 +540,6 @@ const StudentList = ({
                           parentName: "",
                           parentEmail: "",
                           parentPassword: "",
-                          teacherId: "",
                           status: "active",
                         });
                         setIsExistingParent(false);
@@ -659,20 +639,6 @@ const StudentList = ({
                 ))}
               </select>
 
-              {/* Teacher filter */}
-              <select
-                className="border rounded-lg p-2 w-full md:w-40"
-                value={filterTeacher}
-                onChange={(e) => setFilterTeacher(e.target.value)}
-              >
-                <option value="all">All Teachers</option>
-                {teachers.map((t) => (
-                  <option key={t._id} value={t._id}>
-                    {t.name}
-                  </option>
-                ))}
-              </select>
-
               {/* Search */}
               <div className="relative w-full md:w-64">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -711,18 +677,75 @@ const StudentList = ({
           </button>
         </div>
 
+        {/* History filters — only visible on History tab */}
+        {studentView === "history" && (
+          <div className="flex flex-wrap gap-3 px-6 py-3 bg-indigo-50 border-b border-indigo-100">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold text-indigo-700 uppercase tracking-wide">Filter by:</span>
+            </div>
+            {/* Year dropdown — built from actual registration dates */}
+            <select
+              className="border border-indigo-200 rounded-lg px-3 py-1.5 text-sm bg-white focus:ring-2 focus:ring-indigo-400 outline-none"
+              value={historyYear}
+              onChange={(e) => { setHistoryYear(e.target.value); setHistoryMonth("all"); }}
+            >
+              <option value="all">All Years</option>
+              {[...new Set(
+                students
+                  .filter(s => s.status !== "active" && s.registrationDate)
+                  .map(s => new Date(s.registrationDate).getFullYear())
+              )].sort((a, b) => b - a).map(yr => (
+                <option key={yr} value={yr}>{yr}</option>
+              ))}
+            </select>
+
+            {/* Month dropdown */}
+            <select
+              className="border border-indigo-200 rounded-lg px-3 py-1.5 text-sm bg-white focus:ring-2 focus:ring-indigo-400 outline-none"
+              value={historyMonth}
+              onChange={(e) => setHistoryMonth(e.target.value)}
+              disabled={historyYear === "all"}
+            >
+              <option value="all">All Months</option>
+              {["January","February","March","April","May","June",
+                "July","August","September","October","November","December"
+              ].map((name, i) => (
+                <option key={i + 1} value={i + 1}>{name}</option>
+              ))}
+            </select>
+
+            {/* Active filter pill + reset */}
+            {(historyYear !== "all" || historyMonth !== "all") && (
+              <div className="flex items-center gap-2">
+                <span className="bg-indigo-100 text-indigo-700 text-xs font-semibold px-2.5 py-1 rounded-full">
+                  {historyYear !== "all" ? historyYear : ""}
+                  {historyMonth !== "all" ? ` · ${["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][Number(historyMonth)-1]}` : ""}
+                </span>
+                <button
+                  onClick={() => { setHistoryYear("all"); setHistoryMonth("all"); }}
+                  className="text-xs text-indigo-500 hover:text-indigo-700 font-medium underline"
+                >Clear</button>
+              </div>
+            )}
+
+            <span className="ml-auto text-xs text-indigo-500 self-center">
+              {filteredStudents.length} record{filteredStudents.length !== 1 ? "s" : ""}
+            </span>
+          </div>
+        )}
+
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Student</TableHead>  
+                <TableHead className="w-10">#</TableHead>
+                <TableHead>Student</TableHead>
                 <TableHead>Age</TableHead>
                 <TableHead>Gender</TableHead>
                 <TableHead>Date of Birth</TableHead>
                 <TableHead>Reg. Date</TableHead>
                 <TableHead>Parent</TableHead>
                 <TableHead>Class</TableHead>
-                <TableHead>Teacher</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -735,22 +758,14 @@ const StudentList = ({
                 const displayName = student.name || "Unknown";
                 const displayAge = getStudentAge(student);
                 const displayClass = student.classId?.className || student.classId?.name || "-";
-                const displayTeacher = student.teacherId?.name || "-";
                 
                 return (
                   <TableRow key={id}>
+                    {/* Row number column */}
+                    <TableCell className="text-gray-400 font-bold text-sm select-none">{index + 1}.</TableCell>
                     {/* Student name column */}
                     <TableCell>
-                      <div className="flex items-center gap-3">
-                        <span className="text-gray-500 font-bold text-lg min-w-[24px]">
-                          {index + 1}.
-                        </span>
-                        <div>
-                          <p className="font-medium text-gray-900">
-                            {displayName}
-                          </p>
-                        </div>
-                      </div>
+                      <p className="font-medium text-gray-900">{displayName}</p>
                     </TableCell>
 
                     {/* Age */}
@@ -778,9 +793,6 @@ const StudentList = ({
 
                     {/* Class */}
                     <TableCell>{displayClass}</TableCell>
-
-                    {/* Teacher */}
-                    <TableCell>{displayTeacher}</TableCell>
 
                     {/* Status */}
                     <TableCell>
@@ -810,7 +822,6 @@ const StudentList = ({
                                   parentName: student.parentName || "",
                                   parentEmail: "",
                                   parentPassword: "",
-                                  teacherId: student.teacherId?._id || student.teacherId || "",
                                   status: student.status || "active",
                                 });
 

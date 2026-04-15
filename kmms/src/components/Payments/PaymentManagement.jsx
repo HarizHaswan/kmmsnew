@@ -277,6 +277,7 @@ const PaymentManagement = ({ userId, role }) => {
           <table className="w-full text-left text-sm text-gray-600">
             <thead className="bg-white text-gray-700 uppercase text-xs font-semibold">
               <tr>
+                <th className="px-6 py-4 w-10">#</th>
                 <th className="px-6 py-4">Student</th>
                 <th className="px-6 py-4">Category</th>
                 <th className="px-6 py-4">Amount</th>
@@ -288,10 +289,11 @@ const PaymentManagement = ({ userId, role }) => {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {invoices.length === 0 ? (
-                <tr><td colSpan="6" className="px-6 py-8 text-center text-gray-500">No invoices found.</td></tr>
+                <tr><td colSpan="8" className="px-6 py-8 text-center text-gray-500">No invoices found.</td></tr>
               ) : (
-                invoices.map(inv => (
+                invoices.map((inv, index) => (
                   <tr key={inv._id} className="hover:bg-white transition-colors">
+                    <td className="px-6 py-4 text-gray-400 font-bold text-sm select-none">{index + 1}.</td>
                     <td className="px-6 py-4 font-medium text-gray-900">
                       {inv.studentId?.name || students.find(s => s._id === inv.studentId)?.name || 'Unknown'}
                     </td>
@@ -366,6 +368,7 @@ const PaymentManagement = ({ userId, role }) => {
           <table className="w-full text-left text-sm text-gray-600">
             <thead className="bg-white text-gray-700 uppercase text-xs font-semibold">
               <tr>
+                <th className="px-6 py-4 w-10">#</th>
                 <th className="px-6 py-4">Date</th>
                 <th className="px-6 py-4">Method</th>
                 <th className="px-6 py-4">Student</th>
@@ -376,9 +379,9 @@ const PaymentManagement = ({ userId, role }) => {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {payments.length === 0 ? (
-                <tr><td colSpan="5" className="px-6 py-8 text-center text-gray-500">No payments found.</td></tr>
+                <tr><td colSpan="7" className="px-6 py-8 text-center text-gray-500">No payments found.</td></tr>
               ) : (
-                payments.map(pay => {
+                payments.map((pay, index) => {
                   let studName = "Unknown";
                   // the DB stores student as a ref or ID, we find it
                   if (pay.studentId?._id) studName = pay.studentId.name;
@@ -389,6 +392,7 @@ const PaymentManagement = ({ userId, role }) => {
 
                   return (
                     <tr key={pay._id} className="hover:bg-white transition-colors">
+                      <td className="px-6 py-4 text-gray-400 font-bold text-sm select-none">{index + 1}.</td>
                       <td className="px-6 py-4 text-gray-500 whitespace-nowrap">{new Date(pay.paidAt).toLocaleString()}</td>
                       <td className="px-6 py-4 font-medium text-gray-700">{pay.method}</td>
                       <td className="px-6 py-4 text-gray-900">{studName}</td>

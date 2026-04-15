@@ -98,7 +98,7 @@ const Dashboard = ({ user, onLogout }) => {
         return <TeacherAttendance user={user} />;
 
       if (activeTab === "activities")
-        return <ActivitiesTracking teacherId={user.id} />;
+        return <ActivitiesTracking />;
 
       if (activeTab === "leave-request")
         return <LeaveRequest teacherId={user.id} />;

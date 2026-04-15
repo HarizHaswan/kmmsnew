@@ -194,6 +194,7 @@ const AdminPayroll = () => {
                     <table className="w-full text-left text-sm text-gray-600">
                         <thead className="bg-white text-gray-700 uppercase text-xs font-semibold">
                             <tr>
+                                <th className="px-6 py-4 w-10">#</th>
                                 <th className="px-6 py-4">Teacher</th>
                                 <th className="px-6 py-4">Period</th>
                                 <th className="px-6 py-4 text-right">Base (RM)</th>
@@ -206,9 +207,9 @@ const AdminPayroll = () => {
                         </thead>
                         <tbody className="divide-y divide-gray-100">
                             {filteredSalaries.length === 0 ? (
-                                <tr><td colSpan="8" className="px-6 py-12 text-center text-gray-500">No salary records found.</td></tr>
+                                <tr><td colSpan="9" className="px-6 py-12 text-center text-gray-500">No salary records found.</td></tr>
                             ) : (
-                                filteredSalaries.map(salary => {
+                                filteredSalaries.map((salary, index) => {
                                     const isEditing = editingId === salary._id;
                                     const base = isEditing ? Number(editForm.baseSalary) : salary.baseSalary;
                                     const allow = isEditing ? Number(editForm.allowance) : salary.allowance;
@@ -217,6 +218,7 @@ const AdminPayroll = () => {
 
                                     return (
                                         <tr key={salary._id} className="hover:bg-white transition-colors">
+                                            <td className="px-6 py-4 text-gray-400 font-bold text-sm select-none">{index + 1}.</td>
                                             <td className="px-6 py-4">
                                                 <div className="font-medium text-gray-900">{salary.teacher?.name || 'Unknown'}</div>
                                             </td>
