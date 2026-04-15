@@ -70,10 +70,20 @@ exports.createStudent = async (req, res, next) => {
       }
     }
 
+    // Resolve parentName before creating student
+    const resolvedParentName = existingParentUser 
+      ? existingParentUser.name 
+      : (parentName && parentName.trim() ? parentName.trim() : "Unknown Parent");
+
     // 4. Create Student
     const newStudent = await Student.create({
-      name, dateOfBirth, age, gender, registrationDate, classId,
-      parentName: existingParentUser ? existingParentUser.name : parentName, 
+      name: name || "Unknown Student", 
+      dateOfBirth, 
+      age, 
+      gender, 
+      registrationDate, 
+      classId,
+      parentName: resolvedParentName, 
       teacherId: teacherId || undefined, 
       status: status || "active",
       parentId: existingParentUser ? existingParentUser._id : undefined
@@ -105,6 +115,11 @@ exports.createStudent = async (req, res, next) => {
       await newStudent.save();
     } else if (isExistingParent && existingParentUser) {
       console.log("✅ Linked to Existing Parent ID:", existingParentUser._id);
+      // Update parent's childStudentId to also reference this new child
+      // (childStudentId may be a single ref or we just update it)
+      await User.findByIdAndUpdate(existingParentUser._id, {
+        childStudentId: newStudent._id  // link to newest child (update as needed)
+      });
     }
 
     res.status(201).json(newStudent);

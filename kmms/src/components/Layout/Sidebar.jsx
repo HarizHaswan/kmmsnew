@@ -45,11 +45,10 @@ const Sidebar = ({
     { id: "students", label: "My Students", icon: Users },
     { id: "activities", label: "Daily Activities", icon: Camera },
     { id: "attendance", label: "Attendance", icon: CheckCircle },
-    { id: "timetables", label: "My Timetables", icon: Calendar }, // not wired yet
+    { id: "timetables", label: "My Timetables", icon: Calendar },
     { id: "leave-request", label: "Leave Request", icon: FileText },
     { id: "salary", label: "Salary", icon: Banknote },
-    { id: "messages", label: "Messages", icon: MessageSquare }, // placeholder
-    { id: "progress", label: "Progress Reports", icon: FileText }, // placeholder
+    { id: "progress", label: "Progress Reports", icon: FileText },
     { id: "announcements", label: "Announcements", icon: Bell },
     { id: "settings", label: "Settings", icon: Settings },
   ];

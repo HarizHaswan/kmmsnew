@@ -23,7 +23,8 @@ const studentSchema = new mongoose.Schema(
 
     parentName: {
       type: String,
-      required: true,
+      required: false,
+      default: "",
     },
 
     parentId: {

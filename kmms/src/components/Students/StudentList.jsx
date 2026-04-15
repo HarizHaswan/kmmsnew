@@ -115,7 +115,7 @@ const StudentList = ({
       studentTeacherId === filterTeacher;
 
     return matchesSearch && matchesAgeFilter && matchesClassFilter && matchesTeacherFilter;
-  });
+  }).sort((a, b) => (a.name || "").localeCompare(b.name || ""));
 
   // --- Stats cards ---
   const stats = useMemo(
@@ -146,10 +146,15 @@ const StudentList = ({
       isExistingParent: isExistingParent
     };
 
-    if (editingStudent) {
-      await onUpdate(editingStudent._id || editingStudent.id, payload);
-    } else {
-      await onAdd(payload);
+    try {
+      if (editingStudent) {
+        await onUpdate(editingStudent._id || editingStudent.id, payload);
+      } else {
+        await onAdd(payload);
+      }
+    } catch (err) {
+      console.error("Form submission failed:", err);
+      return; // Stop execution on error
     }
 
     // Reset state
@@ -769,7 +774,7 @@ const StudentList = ({
                     </TableCell>
 
                     {/* Parent */}
-                    <TableCell>{student.parentName || "-"}</TableCell>
+                    <TableCell>{student.parentName || student.parentId?.name || "-"}</TableCell>
 
                     {/* Class */}
                     <TableCell>{displayClass}</TableCell>

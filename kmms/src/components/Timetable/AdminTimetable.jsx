@@ -9,10 +9,10 @@ import { useToast } from "../ui/use-toast"; // Ensure you have this or use alert
 import TimetableGrid from "./TimetableGrid";
 import { getClasses } from "../../api/classes";
 import { getTeachers } from "../../api/teachers";
-import { 
-  getTimetableByClass, 
-  createTimetable, 
-  deleteTimetable 
+import {
+  getTimetableByClass,
+  createTimetable,
+  deleteTimetable
 } from "../../api/timetables"; // Import real API functions
 
 export default function AdminTimetable() {
@@ -21,7 +21,7 @@ export default function AdminTimetable() {
   const [teachers, setTeachers] = useState([]);
   const [selectedClassId, setSelectedClassId] = useState(null);
   const [timetableData, setTimetableData] = useState([]);
-  
+
   const [loading, setLoading] = useState(true);
   const [fetchingTimetable, setFetchingTimetable] = useState(false);
 
@@ -89,20 +89,20 @@ export default function AdminTimetable() {
       // Based on your controller: it expects "teacherId". 
       // If your form stores the "Name" string, you need to find the ID.
       const selectedTeacherObj = teachers.find(t => t.name === formData.teacher);
-      
+
       const payload = {
         classId: selectedClassId,
         day: formData.day,
         startTime: formData.startTime,
         endTime: formData.endTime,
         subject: formData.subject,
-        teacherId: selectedTeacherObj ? selectedTeacherObj._id : null, 
+        teacherId: selectedTeacherObj ? selectedTeacherObj._id : null,
         // If your backend schema allows teacher name strings, change above line.
         // But usually it's an ObjectId reference.
       };
 
       await createTimetable(payload);
-      
+
       // Refresh list
       const updatedData = await getTimetableByClass(selectedClassId);
       setTimetableData(updatedData);
@@ -128,10 +128,10 @@ export default function AdminTimetable() {
 
     try {
       await deleteTimetable(slotId);
-      
+
       // Remove from UI immediately
       setTimetableData((prev) => prev.filter((slot) => slot._id !== slotId && slot.id !== slotId));
-      
+
     } catch (err) {
       console.error("Failed to delete slot", err);
       alert("Failed to delete session.");
@@ -152,9 +152,9 @@ export default function AdminTimetable() {
           [4, 5, 6, "Other"].map((age) => {
             // Group by yearGroup if it exists, otherwise extract from className leading number
             const ageClasses = classes.filter(c => {
-               const parsedYear = c.yearGroup || parseInt((c.className || c.name || "").charAt(0));
-               let determinedAge = [4, 5, 6].includes(parsedYear) ? parsedYear : "Other";
-               return determinedAge === age;
+              const parsedYear = c.yearGroup || parseInt((c.className || c.name || "").charAt(0));
+              let determinedAge = [4, 5, 6].includes(parsedYear) ? parsedYear : "Other";
+              return determinedAge === age;
             });
 
             if (ageClasses.length === 0) return null;
@@ -186,118 +186,104 @@ export default function AdminTimetable() {
         )}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* --- ADD SLOT FORM --- */}
-        <Card className="lg:col-span-1 h-fit">
-          <CardHeader>
-            <CardTitle className="text-lg">Add Session</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleAddSlot} className="space-y-4">
-              
-              {/* Day */}
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-gray-500 uppercase">Day</label>
-                <select
-                  className="w-full p-2 border rounded-md text-sm"
-                  value={formData.day}
-                  onChange={(e) => setFormData({ ...formData, day: e.target.value })}
-                >
-                  {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].map((d) => (
-                    <option key={d} value={d}>{d}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Time */}
-              <div className="grid grid-cols-2 gap-2">
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500 uppercase">Start</label>
-                  <Input
-                    type="time"
-                    value={formData.startTime}
-                    onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
-                    required
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500 uppercase">End</label>
-                  <Input
-                    type="time"
-                    value={formData.endTime}
-                    onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
-                    required
-                  />
-                </div>
-              </div>
-
-              {/* Subject */}
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-gray-500 uppercase">Subject</label>
-                <Input
-                  placeholder="e.g. Mathematics"
-                  value={formData.subject}
-                  onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                  required
-                />
-              </div>
-
-              {/* Teacher */}
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-gray-500 uppercase">Teacher</label>
-                <select
-                  className="w-full p-2 border rounded-md text-sm"
-                  value={formData.teacher}
-                  onChange={(e) => setFormData({ ...formData, teacher: e.target.value })}
-                  required
-                >
-                  <option value="">Select Teacher</option>
-                  {teachers.map((t) => (
-                    <option key={t._id} value={t.name}>
-                      {t.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Submit Button */}
-              <Button type="submit" size="sm" className="w-full bg-primary hover:bg-primary-dark mt-2"><Plus className="w-4 h-4 mr-2" /> Add Slot
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-
-        {/* --- PREVIEW --- */}
-        <div className="lg:col-span-3">
-          <Card className="h-full min-h-[500px]">
-            <CardHeader className="pb-2 border-b">
-              <CardTitle className="flex justify-between items-center text-lg">
-                <span>
-                  Preview: {classes.find(c => c._id === selectedClassId)?.className || "Class"}
-                </span>
-                <span className="text-sm font-normal text-gray-500 flex items-center">
-                  {fetchingTimetable && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                  <Calendar className="w-4 h-4 inline mr-1" />
-                  Weekly Schedule
-                </span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-0 overflow-x-auto">
-              <TimetableGrid
-                slots={timetableData.map(slot => ({
-                  ...slot,
-                  // Ensure these fields map correctly for the Grid component
-                  // Backend populates 'teacherId' as an object { _id, name }
-                  // Grid expects a string 'teacher'
-                  teacher: slot.teacherId?.name || "Unknown Teacher", 
-                  id: slot._id // Map _id to id for deletion logic
-                }))}
-                onDeleteSlot={handleDeleteSlot}
+      {/* --- ADD SESSION FORM (top, horizontal layout) --- */}
+      <Card>
+        <CardHeader className="pb-3 border-b">
+          <CardTitle className="text-lg">Add Session</CardTitle>
+        </CardHeader>
+        <CardContent className="pt-4">
+          <form onSubmit={handleAddSlot} className="flex flex-wrap gap-4 items-end">
+            {/* Day */}
+            <div className="space-y-1 min-w-[130px]">
+              <label className="text-xs font-semibold text-gray-500 uppercase">Day</label>
+              <select
+                className="w-full p-2 border rounded-md text-sm"
+                value={formData.day}
+                onChange={(e) => setFormData({ ...formData, day: e.target.value })}
+              >
+                {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].map((d) => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
+              </select>
+            </div>
+            {/* Start Time */}
+            <div className="space-y-1 min-w-[110px]">
+              <label className="text-xs font-semibold text-gray-500 uppercase">Start</label>
+              <Input
+                type="time"
+                value={formData.startTime}
+                onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
+                required
               />
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+            </div>
+            {/* End Time */}
+            <div className="space-y-1 min-w-[110px]">
+              <label className="text-xs font-semibold text-gray-500 uppercase">End</label>
+              <Input
+                type="time"
+                value={formData.endTime}
+                onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
+                required
+              />
+            </div>
+            {/* Subject */}
+            <div className="space-y-1 flex-1 min-w-[150px]">
+              <label className="text-xs font-semibold text-gray-500 uppercase">Subject</label>
+              <Input
+                placeholder="e.g. Mathematics"
+                value={formData.subject}
+                onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                required
+              />
+            </div>
+            {/* Teacher */}
+            <div className="space-y-1 flex-1 min-w-[160px]">
+              <label className="text-xs font-semibold text-gray-500 uppercase">Teacher</label>
+              <select
+                className="w-full p-2 border rounded-md text-sm"
+                value={formData.teacher}
+                onChange={(e) => setFormData({ ...formData, teacher: e.target.value })}
+                required
+              >
+                <option value="">Select Teacher</option>
+                {teachers.map((t) => (
+                  <option key={t._id} value={t.name}>{t.name}</option>
+                ))}
+              </select>
+            </div>
+            {/* Submit */}
+            <Button type="submit" className="bg-primary hover:bg-primary-dark px-5 whitespace-nowrap">
+              <Plus className="h-6 w-20 mr-2" /> Add Slot
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+
+      {/* --- PREVIEW (full width below form) --- */}
+      <Card className="min-h-[500px]">
+        <CardHeader className="pb-2 border-b">
+          <CardTitle className="flex justify-between items-center text-lg">
+            <span>
+              Preview: {classes.find(c => c._id === selectedClassId)?.className || "Class"}
+            </span>
+            <span className="text-sm font-normal text-gray-500 flex items-center">
+              {fetchingTimetable && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              <Calendar className="w-4 h-4 inline mr-1" />
+              Weekly Schedule
+            </span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-0 overflow-x-auto">
+          <TimetableGrid
+            slots={timetableData.map(slot => ({
+              ...slot,
+              teacher: slot.teacherId?.name || "Unknown Teacher",
+              id: slot._id
+            }))}
+            onDeleteSlot={handleDeleteSlot}
+          />
+        </CardContent>
+      </Card>
     </div>
   );
 }
