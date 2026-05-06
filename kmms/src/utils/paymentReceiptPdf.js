@@ -1,6 +1,6 @@
 import jsPDF from "jspdf";
 
-const SCHOOL_NAME = "Tadika Khalifah Muda";
+const SCHOOL_NAME = "Tadika Dunia Cahaya";
 
 function formatMoney(n) {
   const num = Number(n);
@@ -128,3 +128,211 @@ export function downloadFeeReceiptPdf({
   const safeFile = `KMMS-Receipt-${receiptNo.replace(/[^a-zA-Z0-9-_]/g, "")}.pdf`;
   doc.save(safeFile);
 }
+
+/**
+ * Builds a billing invoice PDF for parents to download BEFORE payment.
+ * Shows what is owed, due date, and bank transfer instructions.
+ * @param {Object} opts
+ * @param {string} [opts.schoolName]
+ * @param {string} opts.payerName
+ * @param {string} opts.studentName
+ * @param {Object} opts.invoice — amount, category, feeItem, dueDate, _id, status (used for single invoice OR as header meta for consolidated)
+ * @param {Array<Object>} [opts.invoiceItems] — array of individual invoice objects for itemised PDF (consolidated mode)
+ */
+export function downloadInvoiceBillingPdf({
+  schoolName = SCHOOL_NAME,
+  payerName,
+  studentName,
+  invoice,
+  invoiceItems,
+}) {
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  const pageW = doc.internal.pageSize.getWidth();
+  const margin = 18;
+  let y = 22;
+
+  // Determine mode
+  const isConsolidated = Array.isArray(invoiceItems) && invoiceItems.length > 0;
+  const items = isConsolidated ? invoiceItems : [invoice];
+
+  const invId = String(invoice._id || "");
+  const invoiceNo = isConsolidated
+    ? invId  // already a STMT-XXXX ref from the modal
+    : invId ? `INV-${invId.slice(-8).toUpperCase()}` : `INV-${Date.now()}`;
+
+  const amountDue = isConsolidated
+    ? items.reduce((sum, inv) => sum + Number(inv.amount || 0), 0)
+    : Number(invoice.amount || 0);
+
+  const dueDate = invoice.dueDate
+    ? new Date(invoice.dueDate).toLocaleDateString("en-MY", { dateStyle: "medium" })
+    : "—";
+  const issuedDate = invoice.createdAt
+    ? new Date(invoice.createdAt).toLocaleDateString("en-MY", { dateStyle: "medium" })
+    : new Date().toLocaleDateString("en-MY", { dateStyle: "medium" });
+
+  // Header
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(16);
+  doc.text(schoolName, pageW / 2, y, { align: "center" });
+  y += 8;
+
+  doc.setFontSize(12);
+  doc.text(isConsolidated ? "OUTSTANDING FEE STATEMENT" : "BILLING INVOICE", pageW / 2, y, { align: "center" });
+  y += 6;
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+  doc.setTextColor(120);
+  doc.text(
+    isConsolidated
+      ? "This statement lists all your outstanding fees. Please pay the total amount due."
+      : "This is a billing notice. Payment is required by the due date below.",
+    pageW / 2, y, { align: "center" }
+  );
+  doc.setTextColor(0);
+  y += 10;
+
+  doc.setDrawColor(200);
+  doc.line(margin, y, pageW - margin, y);
+  y += 8;
+
+  const row = (label, value, bold = false) => {
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(10);
+    doc.text(label, margin, y);
+    doc.setFont("helvetica", bold ? "bold" : "normal");
+    const lines = doc.splitTextToSize(String(value ?? "—"), pageW - margin * 2 - 48);
+    doc.text(lines, margin + 45, y);
+    y += Math.max(6, lines.length * 5);
+  };
+
+  row("Invoice Ref:", invoiceNo);
+  row("Issued Date:", issuedDate);
+  if (isConsolidated) {
+    // Earliest due date
+    const earliest = items
+      .filter((inv) => inv.dueDate)
+      .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))[0];
+    row("Earliest Due:", earliest
+      ? new Date(earliest.dueDate).toLocaleDateString("en-MY", { dateStyle: "medium" })
+      : "—");
+  } else {
+    row("Due Date:", dueDate);
+  }
+  row("Billed To:", payerName || "Parent / Guardian");
+  row("Student:", studentName || "—");
+
+  y += 4;
+  doc.setDrawColor(200);
+  doc.line(margin, y, pageW - margin, y);
+  y += 8;
+
+  // ── Fee Items Table ──
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(10);
+  doc.text("Fee Items", margin, y);
+  y += 6;
+
+  // Table header
+  doc.setFillColor(245, 245, 250);
+  doc.rect(margin, y, pageW - margin * 2, 7, "F");
+  doc.setFontSize(9);
+  doc.setFont("helvetica", "bold");
+  doc.text("Description", margin + 2, y + 5);
+  doc.text("Category", margin + 80, y + 5);
+  doc.text("Due Date", margin + 120, y + 5);
+  doc.text("Amount (RM)", pageW - margin - 2, y + 5, { align: "right" });
+  y += 9;
+
+  doc.setDrawColor(210);
+  doc.line(margin, y, pageW - margin, y);
+  y += 4;
+
+  // Table rows
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+  items.forEach((inv, i) => {
+    const desc = inv.feeItem || inv.category || "Fee";
+    const cat = inv.category || "—";
+    const due = inv.dueDate
+      ? new Date(inv.dueDate).toLocaleDateString("en-MY", { dateStyle: "short" })
+      : "—";
+    const amt = `RM ${formatMoney(inv.amount)}`;
+
+    // Alternate row background
+    if (i % 2 === 0) {
+      doc.setFillColor(252, 252, 252);
+      doc.rect(margin, y - 3, pageW - margin * 2, 8, "F");
+    }
+
+    doc.setFont("helvetica", "bold");
+    const descLines = doc.splitTextToSize(desc, 75);
+    doc.text(descLines, margin + 2, y);
+    doc.setFont("helvetica", "normal");
+    doc.text(doc.splitTextToSize(cat, 35), margin + 80, y);
+    doc.text(due, margin + 120, y);
+    doc.text(amt, pageW - margin - 2, y, { align: "right" });
+
+    y += Math.max(7, descLines.length * 5);
+
+    if (y > 260) {
+      doc.addPage();
+      y = 20;
+    }
+  });
+
+  doc.setDrawColor(180);
+  doc.line(margin, y, pageW - margin, y);
+  y += 2;
+
+  // ── Total amount due box ──
+  y += 6;
+  doc.setFillColor(240, 245, 255);
+  doc.roundedRect(margin, y, pageW - margin * 2, 18, 3, 3, "F");
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(11);
+  doc.text("TOTAL AMOUNT DUE", margin + 5, y + 7);
+  doc.setFontSize(14);
+  doc.text(`RM ${formatMoney(amountDue)}`, pageW - margin - 5, y + 11, { align: "right" });
+  y += 26;
+
+  // Payment instructions
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(10);
+  doc.text("Payment Instructions", margin, y);
+  y += 7;
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+  const instructions = [
+    `Please transfer the total amount due (RM ${formatMoney(amountDue)}) to the kindergarten bank account.`,
+    "After payment, upload your transfer receipt via the KMMS parent portal under Payments > Pay Now.",
+    "Your payment will be verified by the admin and a receipt will be issued upon clearance.",
+    "",
+    "For enquiries, please contact the kindergarten office.",
+  ];
+  instructions.forEach((line) => {
+    if (line === "") { y += 3; return; }
+    const wrapped = doc.splitTextToSize(line, pageW - margin * 2);
+    doc.text(wrapped, margin, y);
+    y += wrapped.length * 5 + 2;
+  });
+
+  y += 6;
+  doc.setDrawColor(220);
+  doc.line(margin, y, pageW - margin, y);
+  y += 8;
+
+  doc.setFont("helvetica", "italic");
+  doc.setFontSize(8);
+  doc.setTextColor(120);
+  doc.text(
+    `Generated on ${new Date().toLocaleString("en-MY")} by KMMS · ${invoiceNo}`,
+    pageW / 2, y, { align: "center" }
+  );
+
+  const safeFile = `KMMS-Invoice-${invoiceNo.replace(/[^a-zA-Z0-9-_]/g, "")}.pdf`;
+  doc.save(safeFile);
+}
+

@@ -13,6 +13,7 @@ import {
   X,
   Banknote,
   Settings,
+  MessageCircle,
 } from "lucide-react";
 
 const Sidebar = ({
@@ -36,6 +37,7 @@ const Sidebar = ({
     { id: "salary", label: "Salary", icon: Banknote },
     { id: "payments", label: "Payment & Ledger", icon: DollarSign },
     { id: "reports", label: "Reports", icon: BarChart },
+    { id: "messages", label: "Messages", icon: MessageCircle },
     { id: "announcements", label: "Announcements", icon: Bell },
     { id: "settings", label: "Settings", icon: Settings },
   ];
@@ -48,6 +50,7 @@ const Sidebar = ({
     { id: "leave-request", label: "Leave Request", icon: FileText },
     { id: "salary", label: "Salary", icon: Banknote },
     { id: "progress", label: "Progress Reports", icon: FileText },
+    { id: "messages", label: "Messages", icon: MessageCircle },
     { id: "announcements", label: "Announcements", icon: Bell },
     { id: "settings", label: "Settings", icon: Settings },
   ];
@@ -57,6 +60,7 @@ const Sidebar = ({
     { id: "child-activities", label: "Daily Activities", icon: Camera },
     { id: "progress", label: "Progress Reports", icon: FileText },
     { id: "payments", label: "Payments", icon: DollarSign },
+    { id: "messages", label: "Messages", icon: MessageCircle },
     { id: "announcements", label: "Announcements", icon: Bell },
     { id: "settings", label: "Settings", icon: Settings },
   ];

@@ -46,6 +46,14 @@ const feeTemplateSchema = new mongoose.Schema(
         ref: "Student",
       },
     ],
+    startMonth: {
+      type: Date,
+      default: null,
+    },
+    endMonth: {
+      type: Date,
+      default: null,
+    },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

@@ -31,6 +31,38 @@ function getMonthPeriodKey(date = new Date()) {
   return `${year}-${month}`;
 }
 
+/**
+ * Returns true if the current month falls within the template's
+ * startMonth–endMonth range (inclusive). If no range is set, always returns true.
+ */
+function isWithinActivePeriod(template) {
+  const now = new Date();
+  const nowYear = now.getFullYear();
+  const nowMonth = now.getMonth(); // 0-indexed
+
+  if (template.startMonth) {
+    const start = new Date(template.startMonth);
+    if (
+      nowYear < start.getFullYear() ||
+      (nowYear === start.getFullYear() && nowMonth < start.getMonth())
+    ) {
+      return false;
+    }
+  }
+
+  if (template.endMonth) {
+    const end = new Date(template.endMonth);
+    if (
+      nowYear > end.getFullYear() ||
+      (nowYear === end.getFullYear() && nowMonth > end.getMonth())
+    ) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 function getDaysInMonth(year, monthIndex) {
   return new Date(year, monthIndex + 1, 0).getDate();
 }
@@ -184,6 +216,11 @@ async function syncFeeTemplates({
   };
 
   for (const template of normalizedTemplates) {
+    // Skip monthly templates that are outside their configured active period
+    if (template.feeType === "monthly" && !isWithinActivePeriod(template)) {
+      continue;
+    }
+
     const targets = await getTargetStudents(template, studentIds);
 
     for (const student of targets) {

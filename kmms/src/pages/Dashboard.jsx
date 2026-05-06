@@ -21,6 +21,7 @@ import TeacherPayslips from "../components/Salary/TeacherPayslips";
 import Reports from "../components/Reports/Reports";
 import ProgressReports from "../components/Progress/ProgressReports";
 import Announcements from "../components/Announcements/Announcements";
+import Messages from "../components/Messages/Messages";
 import TeacherStudentView from "../components/Teachers/TeacherStudentView";
 import Settings from "../components/Settings/Settings";
 import Teachers from "./Teachers";
@@ -69,6 +70,9 @@ const Dashboard = ({ user, onLogout }) => {
       if (activeTab === "announcements")
         return <Announcements />;
 
+      if (activeTab === "messages")
+        return <Messages user={user} />;
+
       if (activeTab === "timetables")
         return <AdminTimetable />;
 
@@ -112,6 +116,9 @@ const Dashboard = ({ user, onLogout }) => {
       if (activeTab === "announcements")
         return <Announcements />;
 
+      if (activeTab === "messages")
+        return <Messages user={user} />;
+
       if (activeTab === "settings")
         return <Settings user={user} />;
 
@@ -137,6 +144,9 @@ const Dashboard = ({ user, onLogout }) => {
 
       if (activeTab === "announcements")
         return <Announcements />;
+
+      if (activeTab === "messages")
+        return <Messages user={user} />;
 
       if (activeTab === "settings")
         return <Settings user={user} />;

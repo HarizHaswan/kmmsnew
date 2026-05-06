@@ -7,12 +7,20 @@ const {
   getMessage,
   createMessage,
   deleteMessage,
+  getUsersForMessaging,
+  markAsRead,
 } = require("../controllers/messageController");
 
 const { protect, authorize } = require("../middleware/authMiddleware");
 
 // Get messages (user's inbox) - all authenticated users
 router.get("/", protect, getMessages);
+
+// Get users available to message
+router.get("/users", protect, getUsersForMessaging);
+
+// Mark messages as read
+router.put("/read/:senderId", protect, markAsRead);
 
 // Get single message (owner)
 router.get("/:id", protect, getMessage);

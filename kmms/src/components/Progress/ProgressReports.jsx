@@ -230,7 +230,7 @@ const ProgressReports = ({ role, user }) => {
               No students found in your class.
             </div>
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="space-y-4">
               {latestReportsByStudent
                 .filter(({ student }) =>
                   selectedStudentFilter === "all"
@@ -240,52 +240,53 @@ const ProgressReports = ({ role, user }) => {
                 .map(({ student, latestReport, reportCount }) => (
                   <div
                     key={student._id}
-                    className="rounded-2xl border border-gray-100 bg-white shadow-sm p-5 space-y-4"
+                    className="flex flex-col md:flex-row gap-4 p-5 rounded-2xl border border-gray-100 bg-white shadow-sm items-start"
                   >
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <h4 className="text-base font-bold text-gray-900">{student.name}</h4>
-                        <p className="text-xs text-gray-500 mt-1">
-                          {student.classId?.className || user?.classAssigned || "Assigned Class"}
-                        </p>
+                    <div className="flex-1 space-y-3 w-full">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <h4 className="text-base font-bold text-gray-900">{student.name}</h4>
+                          <p className="text-xs text-gray-500 mt-1">
+                            {student.classId?.className || user?.classAssigned || "Assigned Class"}
+                          </p>
+                        </div>
+                        <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700">
+                          {reportCount} report{reportCount === 1 ? "" : "s"}
+                        </span>
                       </div>
-                      <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700">
-                        {reportCount} report{reportCount === 1 ? "" : "s"}
-                      </span>
+
+                      {latestReport ? (
+                        <div className="rounded-xl border border-gray-100 bg-gray-50 p-4 space-y-2">
+                          <div className="flex items-center gap-2 text-xs text-gray-500">
+                            <Calendar className="w-3.5 h-3.5" />
+                            {new Date(latestReport.createdAt).toLocaleDateString()}
+                          </div>
+                          <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+                            {latestReport.summary}
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50 p-4 text-sm text-gray-500">
+                          No progress report written yet for this student.
+                        </div>
+                      )}
                     </div>
 
-                    {latestReport ? (
-                      <div className="rounded-xl border border-gray-100 bg-gray-50 p-4 space-y-2">
-                        <div className="flex items-center gap-2 text-xs text-gray-500">
-                          <Calendar className="w-3.5 h-3.5" />
-                          {new Date(latestReport.createdAt).toLocaleDateString()}
-                        </div>
-                        <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-                          {latestReport.summary}
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50 p-4 text-sm text-gray-500">
-                        No progress report written yet for this student.
-                      </div>
-                    )}
-
-                    <div className="flex gap-2">
+                    <div className="flex md:flex-col gap-2 w-full md:w-auto md:min-w-[140px] pt-1">
                       <button
                         type="button"
                         onClick={() => openCreateModal(student._id)}
-                        className="flex-1 px-3 py-2 rounded-xl border border-accent/20 text-accent font-medium text-sm hover:bg-accent/5"
+                        className="flex-1 md:flex-none w-full px-3 py-2 rounded-xl border border-accent/20 text-accent font-medium text-sm hover:bg-accent/5 flex justify-center items-center gap-1.5"
                       >
-                        New Report
+                        <Plus className="w-4 h-4" /> New Report
                       </button>
                       {latestReport && (
                         <button
                           type="button"
                           onClick={() => openEditModal(latestReport)}
-                          className="flex-1 px-3 py-2 rounded-xl border border-gray-200 text-gray-700 font-medium text-sm hover:bg-gray-50 flex items-center justify-center gap-2"
+                          className="flex-1 md:flex-none w-full px-3 py-2 rounded-xl border border-gray-200 text-gray-700 font-medium text-sm hover:bg-gray-50 flex items-center justify-center gap-2"
                         >
-                          <Pencil className="w-4 h-4" />
-                          Edit Latest
+                          <Pencil className="w-4 h-4" /> Edit Latest
                         </button>
                       )}
                     </div>

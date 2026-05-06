@@ -12,9 +12,29 @@ router.get("/", protect, async (req, res) => {
 
     // If NOT admin, restrict what they can see
     if (req.user.role !== "admin") {
-      // Users see announcements for "all" OR their specific role
-      // Example: Teachers see "all" and "teacher"
-      query.targetRole = { $in: ["all", req.user.role] };
+      if (req.user.role === "teacher") {
+        query.$or = [
+          { 
+            targetRole: { $in: ["all", "teacher"] },
+            targetClass: { $in: ["", null] }
+          },
+          { createdBy: req.user._id }
+        ];
+      } else if (req.user.role === "parent") {
+        query.targetRole = { $in: ["all", "parent"] };
+        
+        const Student = require("../models/Student");
+        const students = await Student.find({ parentId: req.user._id }).populate("classId");
+        const parentClasses = students.map(s => s.classId?.className).filter(Boolean);
+        
+        let classConditions = [
+          { targetClass: { $in: ["", null] } }
+        ];
+        if (parentClasses.length > 0) {
+          classConditions.push({ targetClass: { $in: parentClasses } });
+        }
+        query.$or = classConditions;
+      }
     }
 
     const list = await Announcement.find(query)
@@ -29,12 +49,13 @@ router.get("/", protect, async (req, res) => {
 
 // ADMIN & TEACHER: Create announcement
 router.post("/", protect, authorize("admin", "teacher"), async (req, res) => {
-  const { title, message, targetRole } = req.body;
+  const { title, message, targetRole, targetClass } = req.body;
 
   const newA = await Announcement.create({
     title,
     message,
     targetRole: targetRole || "all",
+    targetClass: targetClass || "",
     createdBy: req.user._id, // This is coming from req.user
   });
 

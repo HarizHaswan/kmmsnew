@@ -873,25 +873,28 @@ const Reports = () => {
                     </div>
                   ) : (
                     <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
-                      {outstandingInvoices.map((invoice) => (
+                      {outstandingInvoices.map((invoice, index) => (
                         <div
                           key={invoice._id}
                           className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 p-4 rounded-xl border border-gray-100 bg-gray-50"
                         >
-                          <div>
-                            <p className="font-semibold text-gray-900">
-                              {getStudentName(invoice.studentId)}
-                            </p>
-                            <p className="text-sm text-gray-500 mt-1">
-                              {invoice.feeItem || invoice.category || "Fee"} -{" "}
-                              {invoice.category || "Uncategorized"}
-                            </p>
-                            <p className="text-xs text-gray-400 mt-1">
-                              Issued {new Date(invoice.createdAt).toLocaleDateString()}
-                              {invoice.dueDate
-                                ? ` | Due ${new Date(invoice.dueDate).toLocaleDateString()}`
-                                : ""}
-                            </p>
+                          <div className="flex gap-3">
+                            <span className="font-bold text-gray-400 mt-0.5 w-5">{index + 1}.</span>
+                            <div>
+                              <p className="font-semibold text-gray-900">
+                                {getStudentName(invoice.studentId)}
+                              </p>
+                              <p className="text-sm text-gray-500 mt-1">
+                                {invoice.feeItem || invoice.category || "Fee"} -{" "}
+                                {invoice.category || "Uncategorized"}
+                              </p>
+                              <p className="text-xs text-gray-400 mt-1">
+                                Issued {new Date(invoice.createdAt).toLocaleDateString()}
+                                {invoice.dueDate
+                                  ? ` | Due ${new Date(invoice.dueDate).toLocaleDateString()}`
+                                  : ""}
+                              </p>
+                            </div>
                           </div>
                           <div className="grid grid-cols-3 gap-3 text-sm min-w-[18rem]">
                             <div className="rounded-lg bg-white border border-gray-100 p-3">

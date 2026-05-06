@@ -170,10 +170,10 @@ const LeaveRequest = ({ teacherId }) => {
         </span>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column: Form */}
-        <div className="lg:col-span-1">
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 sticky top-24">
+      <div className="space-y-8">
+        {/* Top Section: Form */}
+        <div>
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
             <div className="flex items-center gap-2 mb-6 text-indigo-600">
               <FileText className="w-5 h-5" />
               <h3 className="font-bold text-lg">New Application</h3>
@@ -185,92 +185,97 @@ const LeaveRequest = ({ teacherId }) => {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Reason for Leave</label>
-                <textarea
-                  name="reason"
-                  placeholder="Please describe why you need leave..."
-                  value={form.reason}
-                  onChange={handleChange}
-                  className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all resize-none text-sm"
-                  rows="4"
-                  required
-                />
-              </div>
-
-              <div className="grid grid-cols-1 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
-                  <div className="relative">
-                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                    <input
-                      type="date"
-                      name="startDate"
-                      value={form.startDate}
-                      onChange={handleChange}
-                      className="w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
-                  <div className="relative">
-                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                    <input
-                      type="date"
-                      name="endDate"
-                      value={form.endDate}
-                      onChange={handleChange}
-                      className="w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Medical Certificate (Optional)</label>
-                <div className="relative">
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    className="w-full text-sm text-gray-500
-                      file:mr-4 file:py-2.5 file:px-4
-                      file:rounded-xl file:border-0
-                      file:text-sm file:font-medium
-                      file:bg-indigo-50 file:text-indigo-700
-                      hover:file:bg-indigo-100 transition-colors
-                      cursor-pointer border border-gray-200 rounded-xl pr-3"
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="flex flex-col">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Reason for Leave</label>
+                  <textarea
+                    name="reason"
+                    placeholder="Please describe why you need leave..."
+                    value={form.reason}
+                    onChange={handleChange}
+                    className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all resize-none text-sm flex-1 min-h-[120px]"
+                    required
                   />
                 </div>
+
+                <div className="space-y-5">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                      <div className="relative">
+                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                        <input
+                          type="date"
+                          name="startDate"
+                          value={form.startDate}
+                          onChange={handleChange}
+                          className="w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                      <div className="relative">
+                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                        <input
+                          type="date"
+                          name="endDate"
+                          value={form.endDate}
+                          onChange={handleChange}
+                          className="w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Medical Certificate (Optional)</label>
+                    <div className="relative">
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleFileChange}
+                        className="w-full text-sm text-gray-500
+                          file:mr-4 file:py-2.5 file:px-4
+                          file:rounded-xl file:border-0
+                          file:text-sm file:font-medium
+                          file:bg-indigo-50 file:text-indigo-700
+                          hover:file:bg-indigo-100 transition-colors
+                          cursor-pointer border border-gray-200 rounded-xl pr-3"
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              <button
-                type="submit"
-                disabled={submitting}
-                className="w-full mt-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl transition-all shadow-lg hover:shadow-indigo-200 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-              >
-                {submitting ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Submitting...
-                  </>
-                ) : (
-                  "Submit Application"
-                )}
-              </button>
+              <div className="flex justify-end pt-2">
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="w-full md:w-auto md:min-w-[200px] bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition-all shadow-lg hover:shadow-indigo-200 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {submitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Submitting...
+                    </>
+                  ) : (
+                    "Submit Application"
+                  )}
+                </button>
+              </div>
             </form>
           </div>
         </div>
 
-        {/* Right Column: List */}
-        <div className="lg:col-span-2 space-y-4">
+        {/* Bottom Section: List */}
+        <div className="space-y-4">
           <h3 className="font-bold text-gray-800 text-lg flex items-center gap-2">
-            My History <span className="bg-brand-bg text-gray-600 text-xs px-2 py-1 rounded-full">{leaves.length}</span>
+            My History <span className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full">{leaves.length}</span>
           </h3>
 
           {leaves.length === 0 ? (
@@ -287,6 +292,7 @@ const LeaveRequest = ({ teacherId }) => {
                 <table className="w-full text-left text-sm text-gray-600">
                   <thead className="bg-white text-gray-700 uppercase text-xs font-semibold">
                     <tr>
+                      <th className="px-6 py-4 w-12 text-center">No.</th>
                       <th className="px-6 py-4">Reason</th>
                       <th className="px-6 py-4">Duration</th>
                       <th className="px-6 py-4">Attendance Impact</th>
@@ -296,8 +302,11 @@ const LeaveRequest = ({ teacherId }) => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {leaves.map((leave) => (
-                      <tr key={leave._id} className="hover:bg-white transition-colors">
+                    {leaves.map((leave, index) => (
+                      <tr key={leave._id} className="hover:bg-gray-50 transition-colors">
+                        <td className="px-6 py-4 text-center font-bold text-gray-400">
+                          {index + 1}.
+                        </td>
                         <td className="px-6 py-4 font-medium text-gray-900 max-w-xs truncate">
                           {leave.reason}
                         </td>
