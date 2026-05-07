@@ -19,6 +19,8 @@ import {
   createPayment,
   getPayments,
   uploadPaymentReceipt,
+  verifyPayment,
+  rejectPayment,
 } from "../../api/payments";
 import { getStudents } from "../../api/students";
 import { getClasses } from "../../api/classes";
@@ -483,7 +485,7 @@ const PaymentManagement = ({ userId, role, user }) => {
           studentId: getIdValue(inv.studentId),
           amountPaid: toPay,
           method: "Bank Transfer",
-          note: "Parent Payment Upload",
+          note: "Parent Payment - Pending Admin Verification",
           receiptUrl,
         });
         remaining -= toPay;
@@ -949,6 +951,23 @@ const PaymentManagement = ({ userId, role, user }) => {
           >
             Invoices / Fees
           </button>
+          {isAdmin && (
+            <button
+              onClick={() => setActiveTab("pending-verification")}
+              className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center gap-2 ${
+                activeTab === "pending-verification"
+                  ? "border-amber-500 text-amber-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              }`}
+            >
+              Pending Verification
+              {payments.filter(p => p.status === "pending_verification").length > 0 && (
+                <span className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                  {payments.filter(p => p.status === "pending_verification").length}
+                </span>
+              )}
+            </button>
+          )}
           <button
             onClick={() => setActiveTab("ledger")}
             className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
@@ -1517,11 +1536,19 @@ const PaymentManagement = ({ userId, role, user }) => {
             const byStudent = {};
             for (const inv of displayedInvoices) {
               const sid = getIdValue(inv.studentId);
-              if (!byStudent[sid]) byStudent[sid] = { outstanding: [], paid: [] };
+              if (!byStudent[sid]) byStudent[sid] = { outstanding: [], paid: [], pendingVerification: [] };
               if (inv.status === "paid") {
                 byStudent[sid].paid.push(inv);
               } else {
-                byStudent[sid].outstanding.push(inv);
+                // Check if this invoice has a pending payment
+                const hasPending = payments.some(
+                  p => getIdValue(p.invoiceId) === String(inv._id) && p.status === "pending_verification"
+                );
+                if (hasPending) {
+                  byStudent[sid].pendingVerification.push(inv);
+                } else {
+                  byStudent[sid].outstanding.push(inv);
+                }
               }
             }
             const studentIds = Object.keys(byStudent);
@@ -1535,7 +1562,7 @@ const PaymentManagement = ({ userId, role, user }) => {
             return (
               <div className="p-5 space-y-6">
                 {studentIds.map((sid) => {
-                  const { outstanding, paid } = byStudent[sid];
+                  const { outstanding, paid, pendingVerification } = byStudent[sid];
                   const studentName = getStudentName(sid);
                   const totalOutstanding = outstanding.reduce(
                     (sum, inv) => sum + getInvoiceBalance(inv), 0
@@ -1620,6 +1647,36 @@ const PaymentManagement = ({ userId, role, user }) => {
                         </div>
                       )}
 
+                      {pendingVerification.length > 0 && (
+                        <div className="rounded-2xl border-2 border-blue-200 bg-blue-50 p-5 space-y-3">
+                          <div className="flex items-center gap-2">
+                            <Clock className="w-4 h-4 text-blue-600" />
+                            <p className="text-sm font-bold text-blue-700 uppercase tracking-wide">
+                              Payment Pending Admin Verification
+                            </p>
+                          </div>
+                          <p className="text-xs text-blue-600">
+                            Your payment has been received and is being reviewed by the admin. Your invoice will be updated once verified.
+                          </p>
+                          <div className="divide-y divide-blue-100 rounded-xl border border-blue-100 bg-white overflow-hidden">
+                            {pendingVerification.map((inv) => (
+                              <div key={inv._id} className="flex items-center justify-between px-4 py-3 text-sm">
+                                <div>
+                                  <p className="font-semibold text-gray-800">{inv.feeItem || inv.category || "Fee"}</p>
+                                  <p className="text-xs text-gray-500 mt-0.5">{inv.category}</p>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <p className="font-bold text-gray-900">RM {formatMoney(inv.amount)}</p>
+                                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
+                                    <Clock className="w-3 h-3" /> Under Review
+                                  </span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
                       {paid.length > 0 && (
                         <div className="space-y-2">
                           <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
@@ -1671,6 +1728,113 @@ const PaymentManagement = ({ userId, role, user }) => {
           })()}
         </div>
       )}
+
+      {activeTab === "pending-verification" && isAdmin && (() => {
+        const pending = payments.filter(p => p.status === "pending_verification");
+
+        const handleVerify = async (paymentId) => {
+          if (!window.confirm("Verify this payment? The invoice will be updated.")) return;
+          try {
+            await verifyPayment(paymentId);
+            await fetchData();
+          } catch (e) {
+            alert("Failed to verify payment.");
+          }
+        };
+
+        const handleReject = async (paymentId) => {
+          if (!window.confirm("Reject this payment? The parent will be notified.")) return;
+          try {
+            await rejectPayment(paymentId);
+            await fetchData();
+          } catch (e) {
+            alert("Failed to reject payment.");
+          }
+        };
+
+        return (
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <h3 className="text-lg font-bold text-gray-900">Pending Payment Verification</h3>
+              <span className="text-sm text-gray-500">{pending.length} submission{pending.length !== 1 ? "s" : ""} awaiting review</span>
+            </div>
+
+            {pending.length === 0 ? (
+              <div className="bg-white border border-dashed border-gray-200 rounded-2xl py-16 text-center">
+                <CheckCircle className="w-10 h-10 text-green-400 mx-auto mb-3" />
+                <p className="text-gray-500 font-medium">All caught up! No pending payments.</p>
+              </div>
+            ) : (
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <table className="w-full text-left text-sm text-gray-600">
+                  <thead className="bg-amber-50 text-amber-800 uppercase text-xs font-semibold border-b border-amber-100">
+                    <tr>
+                      <th className="px-5 py-4">#</th>
+                      <th className="px-5 py-4">Student</th>
+                      <th className="px-5 py-4">Invoice / Fee</th>
+                      <th className="px-5 py-4">Date Submitted</th>
+                      <th className="px-5 py-4">Method</th>
+                      <th className="px-5 py-4">Receipt</th>
+                      <th className="px-5 py-4 text-right">Amount</th>
+                      <th className="px-5 py-4 text-center">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {pending.map((p, i) => (
+                      <tr key={p._id} className="hover:bg-amber-50/40 transition-colors">
+                        <td className="px-5 py-4 text-gray-400 font-medium">{i + 1}</td>
+                        <td className="px-5 py-4 font-semibold text-gray-800">
+                          {p.studentId?.name || "—"}
+                        </td>
+                        <td className="px-5 py-4 text-gray-700">
+                          {p.invoiceId?.feeItem || p.invoiceId?.category || "Invoice"}
+                        </td>
+                        <td className="px-5 py-4 text-gray-500">
+                          {new Date(p.createdAt).toLocaleDateString("en-MY", { dateStyle: "medium" })}
+                        </td>
+                        <td className="px-5 py-4">{p.method || "—"}</td>
+                        <td className="px-5 py-4">
+                          {p.receiptUrl ? (
+                            <a
+                              href={p.receiptUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 text-xs font-medium text-indigo-700 bg-indigo-50 border border-indigo-200 px-2.5 py-1.5 rounded-lg hover:bg-indigo-100 transition"
+                            >
+                              <Paperclip className="w-3 h-3" /> View
+                            </a>
+                          ) : (
+                            <span className="text-gray-400 text-xs">No receipt</span>
+                          )}
+                        </td>
+                        <td className="px-5 py-4 text-right font-bold text-gray-900">
+                          RM {formatMoney(p.amountPaid)}
+                        </td>
+                        <td className="px-5 py-4">
+                          <div className="flex items-center justify-center gap-2">
+                            <button
+                              onClick={() => handleVerify(p._id)}
+                              className="inline-flex items-center gap-1 text-xs font-semibold text-white bg-green-600 px-3 py-1.5 rounded-lg hover:bg-green-700 transition"
+                            >
+                              <CheckCircle className="w-3.5 h-3.5" /> Verify
+                            </button>
+                            <button
+                              onClick={() => handleReject(p._id)}
+                              className="inline-flex items-center gap-1 text-xs font-semibold text-white bg-red-500 px-3 py-1.5 rounded-lg hover:bg-red-600 transition"
+                            >
+                              <X className="w-3.5 h-3.5" /> Reject
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {activeTab === "ledger" && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">

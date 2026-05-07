@@ -21,3 +21,13 @@ export const deletePayment = async (id) => {
     const res = await http.delete(`/payments/${id}`);
     return res.data;
 };
+
+export const verifyPayment = async (id) => {
+    const res = await http.put(`/payments/${id}/verify`);
+    return res.data;
+};
+
+export const rejectPayment = async (id) => {
+    const res = await http.put(`/payments/${id}/reject`);
+    return res.data;
+};
