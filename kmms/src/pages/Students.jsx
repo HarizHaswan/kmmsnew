@@ -5,6 +5,8 @@ import {
   addStudent,
   deleteStudent,
   updateStudent,
+  approveStudent,
+  rejectStudent,
 } from "../api/students";
 import { getTeachers } from "../api/teachers";
 import { getClasses, addClass } from "../api/classes";
@@ -39,6 +41,40 @@ export default function Students() {
       console.error("Failed to load data:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleApprove = async (id) => {
+    try {
+      await approveStudent(id);
+      toast({
+        title: "Student Approved",
+        description: "The student has been successfully enrolled.",
+      });
+      loadData();
+    } catch (error) {
+      toast({
+        title: "Approval Failed",
+        description: error.response?.data?.message || "Could not approve student",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleReject = async (id) => {
+    try {
+      await rejectStudent(id);
+      toast({
+        title: "Student Rejected",
+        description: "The enrollment request has been rejected.",
+      });
+      loadData();
+    } catch (error) {
+      toast({
+        title: "Rejection Failed",
+        description: error.response?.data?.message || "Could not reject student",
+        variant: "destructive",
+      });
     }
   };
 
@@ -132,7 +168,9 @@ export default function Students() {
         onUpdate={handleUpdateStudent}
         onDelete={handleDeleteStudent}
         onAddClass={handleAddClass}
+        onApprove={handleApprove}
+        onReject={handleReject}
       />
     </div>
   );
-}
+}

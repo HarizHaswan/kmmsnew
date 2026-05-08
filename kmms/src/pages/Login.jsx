@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import http from "../api/http";
 import {
   Loader2,
@@ -212,6 +213,15 @@ const Login = ({ onLogin }) => {
               </button>
             </form>
           )}
+
+          <div className="mt-8 pt-6 border-t border-gray-100 text-center">
+            <p className="text-gray-500 text-sm">
+              New parent?{" "}
+              <Link to="/enroll" className="text-primary-dark font-bold hover:underline">
+                Enroll your child here
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>

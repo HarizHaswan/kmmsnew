@@ -6,6 +6,11 @@ export const getClasses = async () => {
   return res.data;
 };
 
+export const getPublicClasses = async () => {
+  const res = await api.get("/classes/public");
+  return res.data;
+};
+
 export const addClass = async (classData) => {
   const res = await api.post("/classes", classData);
   return res.data;

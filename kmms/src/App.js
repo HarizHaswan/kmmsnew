@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
+import LandingPage from "./pages/LandingPage";
+import Enrollment from "./pages/Enrollment";
 import Dashboard from "./pages/Dashboard";
 import http from "./api/http"; // IMPORTANT: import axios instance
 import { ToastProvider } from "./components/ui/use-toast";
@@ -55,9 +57,15 @@ function App() {
     <BrowserRouter>
       <Routes>
 
+        {/* LANDING PAGE */}
+        <Route path="/" element={<LandingPage />} />
+
+        {/* ENROLLMENT PAGE */}
+        <Route path="/enroll" element={<Enrollment />} />
+
         {/* LOGIN PAGE */}
         <Route
-          path="/"
+          path="/login"
           element={
             currentUser ? (
               <Navigate to="/dashboard" replace />
@@ -74,7 +82,7 @@ function App() {
             currentUser ? (
               <Dashboard user={currentUser} onLogout={handleLogout} />
             ) : (
-              <Navigate to="/" replace />
+              <Navigate to="/login" replace />
             )
           }
         />

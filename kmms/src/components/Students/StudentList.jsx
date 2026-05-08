@@ -28,6 +28,8 @@ const StudentList = ({
   onAdd,
   onUpdate,
   onAddClass,
+  onApprove,
+  onReject,
   userRole = "admin", // <--- 1. Added userRole prop (Default is 'admin')
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -79,11 +81,15 @@ const StudentList = ({
   // --- Filtering & search ---
   const filteredStudents = students.filter((student) => {
     // 1. CURRENT vs HISTORY filter
-    if (studentView === "current" && (student.status === "graduated" || student.status === "withdrawn")) {
+    if (studentView === "current" && (student.status === "graduated" || student.status === "withdrawn" || student.status === "pending")) {
       return false;
     }
 
-    if (studentView === "history" && student.status === "active") {
+    if (studentView === "history" && (student.status === "active" || student.status === "pending")) {
+      return false;
+    }
+
+    if (studentView === "pending" && student.status !== "pending") {
       return false;
     }
 
@@ -190,7 +196,8 @@ const StudentList = ({
     const statusStyles = {
       active: "bg-green-100 text-green-700",
       graduated: "bg-accent-light text-accent-dark",
-      withdrawn: "bg-red-100 text-red-700"
+      withdrawn: "bg-red-100 text-red-700",
+      pending: "bg-yellow-100 text-yellow-700"
     };
     return statusStyles[status] || statusStyles.active;
   };
@@ -808,8 +815,26 @@ const StudentList = ({
                 : "border-transparent text-gray-500 hover:text-gray-700"
             }`}
           >
-            History
+            Student History
           </button>
+
+          {userRole === "admin" && (
+            <button
+              onClick={() => setStudentView("pending")}
+              className={`px-4 py-2 text-sm font-medium border-b-2 ${
+                studentView === "pending"
+                  ? "border-primary text-primary"
+                  : "border-transparent text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              Pending Requests
+              {students.filter(s => s.status === "pending").length > 0 && (
+                <span className="ml-2 bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">
+                  {students.filter(s => s.status === "pending").length}
+                </span>
+              )}
+            </button>
+          )}
         </div>
 
         {/* History filters — only visible on History tab */}
@@ -952,36 +977,59 @@ const StudentList = ({
 
                     {/* Actions - CONDITIONALLY RENDERED */}
                     <TableCell className="text-right">
-                      {studentView === "current" ? (
+                      {studentView === "current" || studentView === "pending" ? (
                         /* Only show edit if admin */
                         userRole === "admin" && (
                           <div className="flex justify-end gap-2">
-                            <Button
-                              type="button"
-                              className="bg-transparent text-gray-600 hover:bg-brand-bg px-2 py-1"
-                              onClick={() => {
-                                setEditingStudent(student);
-                                setFormData({
-                                  name: student.name || "",
-                                  dateOfBirth: student.dateOfBirth
-                                    ? student.dateOfBirth.split("T")[0]
-                                    : "",
-                                  gender: student.gender || "",
-                                  classId: student.classId?._id || student.classId || "",
-                                  parentName: student.parentName || "",
-                                  parentIcNumber: student.parentIcNumber || "",
-                                  parentPhoneNumber: student.parentPhoneNumber || "",
-                                  homeAddress: student.homeAddress || "",
-                                  parentEmail: "",
-                                  parentPassword: "",
-                                  status: student.status || "active",
-                                });
+                            {student.status === "pending" ? (
+                              <>
+                                <Button
+                                  size="sm"
+                                  className="bg-green-600 hover:bg-green-700 text-white h-8"
+                                  onClick={() => onApprove(student._id || student.id)}
+                                >
+                                  Approve
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="text-red-600 border-red-200 hover:bg-red-50 h-8"
+                                  onClick={() => onReject(student._id || student.id)}
+                                >
+                                  Reject
+                                </Button>
+                              </>
+                            ) : (
+                              <>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-8 w-8 p-0"
+                                  onClick={() => {
+                                    setEditingStudent(student);
+                                    setFormData({
+                                      name: student.name || "",
+                                      dateOfBirth: student.dateOfBirth
+                                        ? student.dateOfBirth.split("T")[0]
+                                        : "",
+                                      gender: student.gender || "",
+                                      classId: student.classId?._id || student.classId || "",
+                                      parentName: student.parentName || "",
+                                      parentIcNumber: student.parentIcNumber || "",
+                                      parentPhoneNumber: student.parentPhoneNumber || "",
+                                      homeAddress: student.homeAddress || "",
+                                      parentEmail: "",
+                                      parentPassword: "",
+                                      status: student.status || "active",
+                                    });
 
-                                setIsAddDialogOpen(true);
-                              }}
-                            >
-                              <Edit className="w-4 h-4 text-gray-600" />
-                            </Button>
+                                    setIsAddDialogOpen(true);
+                                  }}
+                                >
+                                  <Edit className="w-4 h-4 text-gray-500" />
+                                </Button>
+                              </>
+                            )}
                           </div>
                         )
                       ) : (

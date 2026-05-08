@@ -58,6 +58,12 @@ exports.loginUser = async (req, res, next) => {
     const isMatch = await user.matchPassword(cleanPassword);
     
     if (isMatch) {
+      // Check Account Approval Status
+      if (user.status === "Pending") {
+        console.log("❌ Account pending approval");
+        return res.status(401).json({ message: "Your account is pending approval by the administration. Please wait for confirmation." });
+      }
+
       // Check Role
       if (role && user.role !== role.toLowerCase() && user.role !== role) {
          console.log("❌ Role mismatch");

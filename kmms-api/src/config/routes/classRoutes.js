@@ -15,6 +15,9 @@ const { protect, authorize } = require("../middleware/authMiddleware");
 // GET all classes (admin/teacher)
 router.get("/", protect, authorize("admin", "teacher"), getClasses);
 
+// GET classes for public enrollment
+router.get("/public", getClasses);
+
 // GET single class by id (admin/teacher)
 router.get("/:id", protect, authorize("admin", "teacher"), getClass);
 

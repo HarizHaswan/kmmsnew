@@ -5,6 +5,7 @@ import {
   CheckCircle,
   DollarSign,
   ClipboardList,
+  UserPlus,
 } from "lucide-react";
 
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
@@ -20,6 +21,7 @@ import LiveDateTime from "../Common/LiveDateTime";
 export default function AdminDashboard({ setActiveTab }) {
   const [totalStudents, setTotalStudents] = useState(0);
   const [activeTeachers, setActiveTeachers] = useState(0);
+  const [pendingEnrollments, setPendingEnrollments] = useState([]);
   const [attendanceToday, setAttendanceToday] = useState({
     present: 0,
     total: 0,
@@ -42,12 +44,16 @@ export default function AdminDashboard({ setActiveTab }) {
     try {
       setLoading(true);
 
-      // 1. Fetch & Filter Students (Active Only)
+      // 1. Fetch & Filter Students
       const studentsData = await getStudents();
       const activeStudents = studentsData.filter(s =>
         s.status && s.status.toLowerCase() === "active"
       );
+      const pendingStudents = studentsData.filter(s =>
+        s.status && s.status.toLowerCase() === "pending"
+      );
       setTotalStudents(activeStudents.length);
+      setPendingEnrollments(pendingStudents);
 
       // 2. Fetch & Filter Teachers (Active Only)
       const teachersData = await getTeachers();
@@ -175,6 +181,13 @@ export default function AdminDashboard({ setActiveTab }) {
       onClick: () => setActiveTab("users"),
     },
     {
+      title: "Pending Enrollments",
+      value: pendingEnrollments.length,
+      icon: UserPlus,
+      color: "from-blue-400 to-blue-600",
+      onClick: () => setActiveTab("users"),
+    },
+    {
       title: "Active Teachers",
       value: activeTeachers,
       icon: BookOpen,
@@ -240,12 +253,44 @@ export default function AdminDashboard({ setActiveTab }) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Recent Activities</CardTitle>
+            <CardTitle>Pending Enrollment Requests</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              <p className="text-gray-500 text-sm">No recent activities to show.</p>
-            </div>
+            {pendingEnrollments.length === 0 ? (
+              <div className="space-y-4">
+                <p className="text-gray-500 text-sm">No pending enrollments.</p>
+              </div>
+            ) : (
+              <div className="space-y-3 max-h-64 overflow-y-auto pr-2">
+                {pendingEnrollments.slice(0, 5).map(student => (
+                  <div key={student._id} className="p-3 border rounded-lg bg-white flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-semibold text-gray-800">{student.name}</p>
+                      <p className="text-xs text-gray-500">
+                        Age {student.age} • {student.classId?.className || 'No Class'}
+                      </p>
+                    </div>
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={() => setActiveTab("users")}
+                      className="h-8"
+                    >
+                      Review
+                    </Button>
+                  </div>
+                ))}
+                {pendingEnrollments.length > 5 && (
+                  <Button 
+                    variant="ghost" 
+                    className="w-full text-xs text-primary"
+                    onClick={() => setActiveTab("users")}
+                  >
+                    View all {pendingEnrollments.length} requests
+                  </Button>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
 
