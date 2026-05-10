@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import http from "./api/http"; // IMPORTANT: import axios instance
 import { ToastProvider } from "./components/ui/use-toast";
 import { Toaster } from "./components/ui/toaster";
+import { Analytics } from "@vercel/analytics/react";
 
 
 function App() {
@@ -96,6 +97,7 @@ function App() {
       </Routes>
     </BrowserRouter>
     <Toaster />
+    <Analytics />
     </ToastProvider>
   );
 }
